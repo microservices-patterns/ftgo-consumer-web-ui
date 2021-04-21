@@ -1,10 +1,23 @@
 import { Container, Nav, Navbar, NavbarBrand, NavItem, NavLink } from 'reactstrap';
-import { css } from '@emotion/primitives';
+import styled from 'styled-components';
 import { ErrorBoundary } from '../../elements/errorBoundary';
 import { RootRoutes } from './RootRoutes';
 import 'bootstrap/scss/bootstrap.scss';
 import { IconLogo } from '../../elements/icons';
 import './appLayout.css';
+import { NavLink as RoutingLink } from 'react-router-dom';
+
+
+const CustomizedNavbarBrand = styled(NavbarBrand)`
+  white-space: inherit;
+  color: var(--black);
+  font-size: 2rem;
+  font-weight: 600;
+`;
+
+const Span = styled.span`
+  vertical-align: middle;
+`;
 
 export const AppLayout = () => {
 
@@ -13,24 +26,21 @@ export const AppLayout = () => {
       <Navbar className="navbar-shadow">
         <Container className="flex-column flex-sm-row justify-content-between align-content-center">
           <div className="navbar-header align-self-center">
-            <NavbarBrand href="/" className="mr-auto" style={ css`
-              white-space: inherit;
-              color: var(--black);
-              font-size: 2rem;
-              font-weight: 600;` }><IconLogo /> <span style={ css`vertical-align: inherit;` }>FTGO</span></NavbarBrand>
+            <CustomizedNavbarBrand tag={ RoutingLink } to="/" className="mr-auto"><IconLogo />
+              <Span>FTGO</Span></CustomizedNavbarBrand>
           </div>
           <Nav>
             <NavItem>
-              <NavLink pathname="/">Address</NavLink>
+              <NavLink tag={ RoutingLink } to="/">Address</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink disabled pathname="/">Restaurant</NavLink>
+              <NavLink disabled tag={ RoutingLink } to="/">Restaurant</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink disabled pathname="/">Dish</NavLink>
+              <NavLink disabled tag={ RoutingLink } to="/">Dish</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink disabled pathname="/">Order</NavLink>
+              <NavLink disabled tag={ RoutingLink } to="/">Order</NavLink>
             </NavItem>
           </Nav>
           <div className="align-self-center">UserButton <br /> (Logged in)</div>

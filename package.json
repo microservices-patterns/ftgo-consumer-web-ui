@@ -9,8 +9,6 @@
     "node-sass": "^5.0.0"
   },
   "dependencies": {
-    "@emotion/primitives": "^10.0.30",
-    "@emotion/styled": "^10.0.27",
     "@reduxjs/toolkit": "^1.5.1",
     "bootstrap": "^4.6.0",
     "classnames": "^2.3.1",
@@ -18,15 +16,16 @@
     "history": "^4.10.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hook-form": "^7.2.1",
     "react-icons": "^4.2.0",
-    "react-native-web": "^0.9.13",
     "react-redux": "^7.2.3",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-syntax-highlighter": "^15.4.3",
     "react-use": "^17.2.3",
-    "reactstrap": "^8.9.0"
+    "reactstrap": "^8.9.0",
+    "styled-components": "^5.2.3"
   },
   "scripts": {
     "start": "react-scripts start",

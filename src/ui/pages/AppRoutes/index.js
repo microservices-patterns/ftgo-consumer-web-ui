@@ -6,9 +6,13 @@ import { routePaths } from './routePaths';
 
 const LandingPage = lazy(() => import(/* webpackChunkName: "landing" */ '../LandingPage'));
 const LoginPage = lazy(() => import(/* webpackChunkName: "login" */ '../LoginPage'));
+const RestaurantListPage = lazy(() => import(/* webpackChunkName: "places" */ '../RestaurantListPage'));
+const RestaurantPage = lazy(() => import(/* webpackChunkName: "place" */ '../RestaurantPage'));
 
 const routesMap = [
   [ routePaths.landing, LandingPage ],
+  [ routePaths.restaurants, RestaurantListPage ],
+  [ routePaths.restaurant, RestaurantPage ],
   [ routePaths.login, LoginPage ],
 ].reduce((map, [ path, Component ]) => map.set(path, ({
   path,
@@ -17,9 +21,13 @@ const routesMap = [
 
 const routes = [
   routePaths.landing,
-  routePaths.login
+  routePaths.login,
+  routePaths.restaurants,
+  routePaths.restaurant
 ].filter(Boolean)
-  .map(item => typeof item === 'string' ? <Route key={ item } path={ item } { ...routesMap.get(item) } /> : item);
+  .map(item => typeof item === 'string' ?
+    <Route key={ item } path={ item } { ...routesMap.get(item) } /> :
+    item);
 
 
 function Routes() {
@@ -43,7 +51,7 @@ function NoMatch() {
   return (
     <div>
       <h3>
-        No match for <code>{location.pathname}</code>
+        No match for <code>{ location.pathname }</code>
       </h3>
     </div>
   );
