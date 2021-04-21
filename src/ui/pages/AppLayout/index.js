@@ -6,6 +6,11 @@ import 'bootstrap/scss/bootstrap.scss';
 import { IconLogo } from '../../elements/icons';
 import './appLayout.css';
 import { NavLink as RoutingLink } from 'react-router-dom';
+import { routePaths } from '../AppRoutes/routePaths';
+import { accessIsLoading } from '../../../features/ui/loadingSlice';
+import { useSelector } from 'react-redux';
+import { LoadingSpinner } from '../../elements/Loading';
+import { Span } from '../../elements/textElements';
 
 
 const CustomizedNavbarBrand = styled(NavbarBrand)`
@@ -15,11 +20,9 @@ const CustomizedNavbarBrand = styled(NavbarBrand)`
   font-weight: 600;
 `;
 
-const Span = styled.span`
-  vertical-align: middle;
-`;
-
 export const AppLayout = () => {
+
+  const isLoading = useSelector(accessIsLoading())
 
   return <div className="AppLayout">
     <header>
@@ -27,14 +30,14 @@ export const AppLayout = () => {
         <Container className="flex-column flex-sm-row justify-content-between align-content-center">
           <div className="navbar-header align-self-center">
             <CustomizedNavbarBrand tag={ RoutingLink } to="/" className="mr-auto"><IconLogo />
-              <Span>FTGO</Span></CustomizedNavbarBrand>
+              <Span vaMiddle>FTGO</Span></CustomizedNavbarBrand>
           </div>
           <Nav>
             <NavItem>
-              <NavLink tag={ RoutingLink } to="/">Address</NavLink>
+              <NavLink tag={ RoutingLink } to={ routePaths.landing }>Address</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink disabled tag={ RoutingLink } to="/">Restaurant</NavLink>
+              <NavLink disabled tag={ RoutingLink } to={ routePaths.restaurants }>Restaurant</NavLink>
             </NavItem>
             <NavItem>
               <NavLink disabled tag={ RoutingLink } to="/">Dish</NavLink>
@@ -43,6 +46,10 @@ export const AppLayout = () => {
               <NavLink disabled tag={ RoutingLink } to="/">Order</NavLink>
             </NavItem>
           </Nav>
+          {
+            isLoading &&
+            <div className="align-self-center order-3"><LoadingSpinner inline /></div>
+          }
           <div className="align-self-center">UserButton <br /> (Logged in)</div>
         </Container>
 

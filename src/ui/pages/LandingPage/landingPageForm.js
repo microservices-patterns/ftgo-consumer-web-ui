@@ -3,8 +3,12 @@ import React, { useCallback } from 'react';
 import { Col, Form, FormFeedback, FormGroup } from 'reactstrap';
 import { InputWithIcon, RoundedButton } from '../../elements/formElements';
 import { IconClock, IconGeo, IconRefresh, IconSearch } from '../../elements/icons';
-import { useDispatch } from 'react-redux';
-import { retrieveRestaurantsForAddress } from '../../../features/address/addressSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  accessDeliveryAddress,
+  accessDeliveryTime,
+  retrieveRestaurantsForAddress
+} from '../../../features/address/addressSlice';
 import { If } from '../../elements/conditions';
 
 function processFormSubmissionError(effectiveError, setError, clearErrors) {
@@ -12,7 +16,6 @@ function processFormSubmissionError(effectiveError, setError, clearErrors) {
     clearErrors && clearErrors();
     return;
   }
-  debugger;
   if (effectiveError.errors) {
     ((Array.isArray(effectiveError.errors) && effectiveError.errors.every(Array.isArray)) ?
       effectiveError.errors :
@@ -24,43 +27,59 @@ function processFormSubmissionError(effectiveError, setError, clearErrors) {
 }
 
 export const LandingPageForm = () => {
+
+  const deliveryAddress = useSelector(accessDeliveryAddress());
+  const deliveryTime = useSelector(accessDeliveryTime());
+
   const { register, handleSubmit, setError, clearErrors, formState: { isSubmitting, errors } } = useForm({
-    resolver: (values, ctx, options) => ({
-      values, errors: {}
-    })
+    // a bug. In the presence of the below resolver, it is possible to resubmit after errors
+    // however, the required fields validation is not taking place
+    // TODO: resolve this dualistic condition
+    resolver: (values, ctx, options) => {
+      return ({
+        values, errors: {}
+      });
+    },
+    defaultValues: {
+      address: deliveryAddress,
+      time: deliveryTime
+    }
   });
 
   const dispatch = useDispatch();
   const onSubmit = useCallback(async data => {
 
-      const payload = await dispatch(retrieveRestaurantsForAddress({
-        ...data
-      }));
+    const payload = await dispatch(retrieveRestaurantsForAddress({ ...data }));
 
-      processFormSubmissionError(payload.error && (payload.meta.rejectedWithValue ? payload.payload : payload.error), setError, clearErrors);
+    payload.error && processFormSubmissionError((payload.meta.rejectedWithValue ?
+      payload.payload :
+      payload.error), setError, clearErrors);
 
-    },
-    [ setError, dispatch, clearErrors ]);
+  }, [ setError, dispatch, clearErrors ]);
 
   return <Form className="col-md-6 offset-md-3" method="post" onSubmit={ handleSubmit(onSubmit) }>
 
     <FormGroup>
-      <InputWithIcon type="text" tag={ props => (<input type="text" { ...props } { ...register('address', {
+      . <InputWithIcon type="text" tag={ props => (
+      <input type="text" { ...props } required aria-required="true" { ...register('address', {
         required: true
       }) } />) } invalid={ !!(errors.address) } disabled={ isSubmitting } bsSize="lg" placeholder="Enter Address" icon={
-        <IconGeo style={ { color: 'rgba(0, 0, 0, .75)' } } />
-      } />
-      { errors.address && <FormFeedback>{ errors.address.message ?? 'Invalid address' }</FormFeedback> }
+      <IconGeo style={ { color: 'rgba(0, 0, 0, .75)' } } />
+    } />
+      { errors.address &&
+      <FormFeedback>{ errors.address.message || 'Invalid address' }</FormFeedback> }
     </FormGroup>
 
     <FormGroup>
       <InputWithIcon type="time" tag={ props => (
-        <input type="time" { ...props } { ...register('time', { required: true }) } />) } invalid={ !!(errors.time) } disabled={ isSubmitting } bsSize="lg" placeholder="Enter Time" icon={
+        <input type="time" { ...props } required aria-required="true" { ...register('time', { required: true }) } />) } invalid={ !!(errors.time) } disabled={ isSubmitting } bsSize="lg" placeholder="Enter Time" icon={
         <IconClock style={ { color: 'rgba(0, 0, 0, .75)' } } /> } />
-      { errors.time && <FormFeedback>{ errors.time.message ?? 'Invalid time' }</FormFeedback> }
+      { errors.time &&
+      <FormFeedback>{ errors.time.message || 'Invalid time' }</FormFeedback> }
     </FormGroup>
 
-    { errors.form && <FormFeedback>{ errors.form.message ?? `Invalid data we couldn't understand` }</FormFeedback> }
+    { errors.form &&
+    <FormFeedback>{ errors.form.message || `Invalid data we couldn't understand` }</FormFeedback> }
 
     <FormGroup row>
       <Col className="text-right" sm={ { size: 10, offset: 2 } }>

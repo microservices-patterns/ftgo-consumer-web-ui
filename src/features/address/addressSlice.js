@@ -1,7 +1,13 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { fetchRestaurants } from './addressAPI';
 import { safelyExecuteAsync } from '../../shared/promises';
-import { push } from 'connected-react-router';
+import { navigateToPickRestaurants } from '../actions/navigation';
+
+
+const restaurantsAdapter = createEntityAdapter({
+  selectId: ({ id }) => id,
+  sortComparer: ({ id: a }, { id: b }) => a.localeCompare(b)
+});
 
 const initialState = {
   address: null,
@@ -9,36 +15,51 @@ const initialState = {
   status: 'idle',
   value: null,
   error: null,
-  restaurants: null
+  restaurants: restaurantsAdapter.getInitialState()
 };
 
 const ns = 'address';
 
 export const retrieveRestaurantsForAddress = createAsyncThunk(
   'address/fetchRestaurants',
+  /**
+   *
+   * @param { { address: string, time: string, now: number }} data
+   * @param rejectWithValue
+   * @param dispatch
+   * @return {Promise<RejectWithValue<{} extends {rejectValue: infer RejectValue} ? RejectValue : unknown>|*>}
+   */
   async (data, { rejectWithValue, dispatch }) => {
-    const { address, time, now = performance.now() } = data;
+    const { address, time, now = (new Date() - 0) } = data;
     const [ err, response ] = await safelyExecuteAsync(fetchRestaurants(address, time, now));
     if (err) {
       return rejectWithValue(err);
     }
 
     dispatch(keepAddressAndTime({ address, time, now }));
+    // TODO: convert it into correct reducer
     dispatch(keepRestaurants(response.data));
     debugger;
-    dispatch(push('/place'));
+    dispatch(navigateToPickRestaurants());
     return response.data;
   }
 );
+
+
 
 export const addressSlice = createSlice({
   name: ns,
   initialState,
   reducers: {
+    resetAddressAndTime(state) {
+      state.address = null;
+      state.time = 0;
+      state.origin = null;
+    },
     keepAddressAndTime(state, action) {
       state.address = action.payload.address;
       state.time = action.payload.time;
-      state.saved = action.payload.now;
+      state.origin = action.payload.now;
     },
     keepRestaurants(state, action) {
       state.restaurants = action.payload;
@@ -48,9 +69,9 @@ export const addressSlice = createSlice({
     .addCase(retrieveRestaurantsForAddress.pending, state => {
       state.status = 'loading';
     })
-    .addCase(retrieveRestaurantsForAddress.fulfilled, (state, action) => {
+    .addCase(retrieveRestaurantsForAddress.fulfilled, (state, { payload }) => {
       state.status = 'idle';
-      state.value = action.payload;
+      restaurantsAdapter.setAll(state.restaurants, payload.restaurants);
     })
     .addCase(retrieveRestaurantsForAddress.rejected, (state, action) => {
       state.status = 'error';
@@ -58,9 +79,12 @@ export const addressSlice = createSlice({
     })
 });
 
-export const { keepAddressAndTime, keepRestaurants } = addressSlice.actions;
+export const { keepAddressAndTime, keepRestaurants, resetAddressAndTime } = addressSlice.actions;
 
 export const accessAddressStatus = () => ({ [ ns ]: state }) => state.status;
-export const accessAddressRestaurantsList = () => ({ [ ns ]: state }) => state.value;
+export const accessDeliveryAddress = () => ({ [ ns ]: state }) => state.address;
+export const accessDeliveryTime = () => ({ [ ns ]: state }) => state.time;
+export const accessDeliveryTimeBlock = () => ({ [ ns ]: state }) => (state.time && state.origin) ? ({ time: state.time, origin: state.origin }) : null;
+export const accessRestaurantsList = () => ({ [ ns ]: state }) => state.restaurants;
 
 export default addressSlice.reducer;

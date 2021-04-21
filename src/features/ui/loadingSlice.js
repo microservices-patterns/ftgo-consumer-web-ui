@@ -15,6 +15,8 @@ const initialState = {
   requests: {} // Object.create(null)
 };
 
+const ns = 'loading';
+
 const loadingReducer = createReducer(initialState, builder => {
   builder
     .addMatcher(isPendingAction, (state, action) => {
@@ -23,11 +25,17 @@ const loadingReducer = createReducer(initialState, builder => {
       state.requests[ action.meta.requestId ] = 'pending';
     })
     .addMatcher(isFulfilledAction, (state, action) => {
-      state.pendingRequests++;
+      state.pendingRequests--;
       state.isLoading = !!state.pendingRequests;
       state.requests[ action.meta.requestId ] = action.type.endsWith('/rejected') ? 'rejected' : 'resolved';
     });
 });
 
+const namedReducer = {
+  [ ns ]: loadingReducer
+};
 
-export default loadingReducer;
+export const accessIsLoading = () => ({ [ns]: state }) => state.isLoading;
+
+
+export default namedReducer;

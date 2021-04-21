@@ -1,12 +1,10 @@
 import { connectRouter } from 'connected-react-router';
-import counter from './counter/counterSlice';
 import address from './address/addressSlice';
 import loading from './ui/loadingSlice';
 
 export const unconnectedReducer = {
-  counter,
   address,
-  loading
+  ...loading
 };
 
 export const makeConnectedReducer = history => ({
