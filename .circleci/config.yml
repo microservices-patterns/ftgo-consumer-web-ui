@@ -15,16 +15,4 @@ jobs:
           path: ~/ftgo-consumer-web-ui/reports
       - store_artifacts:
           path: ~/ftgo-consumer-web-ui/ci-artefacts
-workflows:
-  version: 2
-  build-test-and-deploy:
-    jobs:
-      - request-build:
-          type: approval
-          filters:
-            branches:
-              only:
-                - master
-      - build:
-          requires:
-            - request-build
+
