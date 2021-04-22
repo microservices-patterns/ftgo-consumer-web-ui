@@ -6,6 +6,8 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "jest-environment-jsdom-sixteen": "^1.0.3",
+    "jest-junit": "^12.0.0",
     "node-sass": "^5.0.0"
   },
   "dependencies": {
@@ -30,8 +32,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "#react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "$(npm bin)/jest --env=jest-environment-jsdom-sixteen --config=./src/jest.config.js --watchAll=false --bail --runInBand --reporters=default --reporters=jest-junit --unhandled-rejections=strict",
+    "test:dev": "$(npm bin)/jest --env=jest-environment-jsdom-sixteen --config=./src/jest.config.js --watchAll=true --reporters=default --reporters=jest-junit --unhandled-rejections=strict",
+    "eject": "#react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

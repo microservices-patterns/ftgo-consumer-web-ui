@@ -64,3 +64,5 @@ export const AppLayout = () => {
     </Container>
   </div>;
 };
+
+export default AppLayout;

@@ -12,6 +12,7 @@ const restaurantsAdapter = createEntityAdapter({
 const initialState = {
   address: null,
   time: null,
+  origin: null,
   status: 'idle',
   value: null,
   error: null,
@@ -53,7 +54,7 @@ export const addressSlice = createSlice({
   reducers: {
     resetAddressAndTime(state) {
       state.address = null;
-      state.time = 0;
+      state.time = null;
       state.origin = null;
     },
     keepAddressAndTime(state, action) {
