@@ -21,10 +21,10 @@ workflows:
     jobs:
       - request-build:
           type: approval
-          #          filters:
-          #            branches:
-          #              only:
-          #                - master
+          filters:
+            branches:
+              only:
+                - master
       - build:
           requires:
             - request-build
