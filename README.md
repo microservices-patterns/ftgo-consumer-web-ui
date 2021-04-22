@@ -24,8 +24,8 @@ The build folder is ready to be deployed. If run by a Circle CI, the contents of
 You may serve the contents of this folder with a static server:
 
 ```shell
-npm install -g serve # if 'serve' is not installed
-serve -s build # or the actual name of the folder
+npm install -g serve  # if 'serve' is not installed
+serve -s build  # assuming the folder is called "build"
 ```
 
 When the `serve` command is run, the following output will inform you of how to view the web application:
