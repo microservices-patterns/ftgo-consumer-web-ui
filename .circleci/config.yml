@@ -8,11 +8,11 @@ jobs:
       - checkout
       - run:
           command: |
-            export CI_ARTEFACTS_PATH=~/ftgo-consumer-web-ui/ci-artefacts |
+            export CI_ARTIFACTS_PATH=~/ftgo-consumer-web-ui/ci-artifacts |
             export JEST_JUNIT_OUTPUT_DIR_PARENT=~/ftgo-consumer-web-ui/reports |
             ./build-and-test-all.sh
       - store_test_results:
           path: ~/ftgo-consumer-web-ui/reports
       - store_artifacts:
-          path: ~/ftgo-consumer-web-ui/ci-artefacts
+          path: ~/ftgo-consumer-web-ui/ci-artifacts
 

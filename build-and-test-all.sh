@@ -22,11 +22,11 @@ if [[ -z "$JEST_JUNIT_OUTPUT_DIR" ]]; then
     mkdir -p "$JEST_JUNIT_OUTPUT_DIR"
 fi
 
-if [[ -z "$CI_ARTEFACTS_PATH" ]]; then
-    export CI_ARTEFACTS_PATH=$(pwd)/ci-artefacts/
-    mkdir -p "$CI_ARTEFACTS_PATH"
+if [[ -z "$CI_ARTIFACTS_PATH" ]]; then
+    export CI_ARTIFACTS_PATH=$(pwd)/ci-artifacts/
+    mkdir -p "$CI_ARTIFACTS_PATH"
 fi
-mkdir -p "$CI_ARTEFACTS_PATH/npm-logs"
+mkdir -p "$CI_ARTIFACTS_PATH/npm-logs"
 
 
 echo ""
@@ -58,9 +58,9 @@ echo ""
 echo ""
 echo "50. Archiving and copying the resulted built files"
 
-tar -czvf "$CI_ARTEFACTS_PATH/build_$(date '+%Y%m%d_%H%M').tar.gz" build
+tar -czvf "$CI_ARTIFACTS_PATH/build_$(date '+%Y%m%d_%H%M').tar.gz" build
 
 cp ./junit.xml "$JEST_JUNIT_OUTPUT_DIR/junit_$(date '+%Y%m%d_%H%M').xml" 2>/dev/null || :
 
 echo "Copy NPM logs"
-[ -d "$HOME/.npm/_logs" ] && cp -R ~/.npm/_logs/* "$CI_ARTEFACTS_PATH/npm-logs" 2>/dev/null || :
+[ -d "$HOME/.npm/_logs" ] && cp -R ~/.npm/_logs/* "$CI_ARTIFACTS_PATH/npm-logs" 2>/dev/null || :
