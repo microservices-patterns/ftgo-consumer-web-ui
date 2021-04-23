@@ -2,13 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCopyToClipboard } from 'react-use';
 import { UncontrolledTooltip } from 'reactstrap';
 import { If } from '../conditions';
-import './snippet.scss';
-//import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import bash from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
 import docco from 'react-syntax-highlighter/dist/esm/styles/hljs/docco';
-//import { E2E_ASSIST } from 'shared-package-frontend/e2e';
+import './snippet.scss';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 SyntaxHighlighter.registerLanguage('bash', bash);

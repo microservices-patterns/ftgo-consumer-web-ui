@@ -7,9 +7,11 @@ jobs:
     steps:
       - checkout
       - run:
+          environment:
+            CI_ARTIFACTS_PATH: ~/ftgo-consumer-web-ui/ci-artifacts
+            JEST_JUNIT_OUTPUT_DIR_PARENT: ~/ftgo-consumer-web-ui/reports
+            POSTGRES_PASSWORD: ""
           command: |
-            export CI_ARTIFACTS_PATH=~/ftgo-consumer-web-ui/ci-artifacts |
-            export JEST_JUNIT_OUTPUT_DIR_PARENT=~/ftgo-consumer-web-ui/reports |
             ./build-and-test-all.sh
       - store_test_results:
           path: ~/ftgo-consumer-web-ui/reports

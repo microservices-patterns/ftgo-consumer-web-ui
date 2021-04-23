@@ -27,6 +27,11 @@ export function stubAsync(promise) {
   return promise;
 }
 
+/**
+ * Prevents another async call if the previous is not fulfilled
+ * @param asyncFn
+ * @return {function(...[*]): null}
+ */
 export function blockedAsync(asyncFn) {
   const ctx = { current: null };
   let count = 0;

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -e
+
+if [[ -z "$JEST_JUNIT_OUTPUT_DIR_PARENT" ]]; then
+    export JEST_JUNIT_OUTPUT_DIR_PARENT=$(pwd)/reports
+fi
+
+echo "JEST_JUNIT_OUTPUT_DIR_PARENT=$JEST_JUNIT_OUTPUT_DIR_PARENT"
+
+rm -rf "$JEST_JUNIT_OUTPUT_DIR_PARENT"
+mkdir -p "$JEST_JUNIT_OUTPUT_DIR_PARENT"
+
+if [[ -z "$JEST_JUNIT_OUTPUT_DIR" ]]; then
+    export JEST_JUNIT_OUTPUT_DIR=$JEST_JUNIT_OUTPUT_DIR_PARENT/junit
+    mkdir -p "$JEST_JUNIT_OUTPUT_DIR"
+fi
+
+if [[ -z "$JEST_COVERAGE_OUTPUT_DIR" ]]; then
+    export JEST_COVERAGE_OUTPUT_DIR=$JEST_JUNIT_OUTPUT_DIR_PARENT/coverage
+    mkdir -p "$JEST_COVERAGE_OUTPUT_DIR"
+fi
+
+echo "JEST_JUNIT_OUTPUT_DIR=$JEST_JUNIT_OUTPUT_DIR"
+echo "JEST_COVERAGE_OUTPUT_DIR=$JEST_COVERAGE_OUTPUT_DIR"
+
+if [[ -z "$CI_ARTIFACTS_PATH" ]]; then
+    export CI_ARTIFACTS_PATH=$(pwd)/ci-artifacts
+    mkdir -p "$CI_ARTIFACTS_PATH"
+fi
+
+echo "CI_ARTIFACTS_PATH=$CI_ARTIFACTS_PATH"
+
+mkdir -p "$CI_ARTIFACTS_PATH/npm-logs"
+
+

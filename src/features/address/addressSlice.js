@@ -39,10 +39,10 @@ export const retrieveRestaurantsForAddress = createAsyncThunk(
 
     dispatch(keepAddressAndTime({ address, time, now }));
     // TODO: convert it into correct reducer
-    dispatch(keepRestaurants(response.data));
+    dispatch(keepRestaurants(response?.data));
     debugger;
     dispatch(navigateToPickRestaurants());
-    return response.data;
+    return response?.data;
   }
 );
 

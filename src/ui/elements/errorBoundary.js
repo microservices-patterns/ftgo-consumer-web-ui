@@ -1,11 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-//import { E2E_ASSIST } from 'shared-package-frontend/e2e';
 import { Snippet } from './Snippet';
-//import { navigateToAppsList } from '../components/AppsRoutes/navigation';
-//import { together } from 'shared-package/functional';
-//import { modalInvoked } from '../../model/actions/modals';
-//import { gaModalInvoked } from '../../services/ga';
 
 export class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -25,15 +20,15 @@ export class ErrorBoundary extends React.Component {
 
   handleDismissError() {
     this.setState({ hasError: false, error: null, info: null });
-    if (this.props.dispatch) {
-//      this.props.dispatch(navigateToAppsList());
-    }
+//    if (this.props.dispatch) {
+////      this.props.dispatch(navigateToAppsList());
+//    }
   }
 
   handleInvokeAssistance() {
-    if (this.props.dispatch) {
-//      this.props.dispatch(together(modalInvoked, gaModalInvoked)('assist'));
-    }
+//    if (this.props.dispatch) {
+////      this.props.dispatch(together(modalInvoked, gaModalInvoked)('assist'));
+//    }
   }
 
   render() {
