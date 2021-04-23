@@ -61,6 +61,7 @@ echo ""
 echo "50. Archiving and copying the resulted built files"
 
 tar -czvf "$CI_ARTIFACTS_PATH/build_$(date '+%Y%m%d_%H%M').tar.gz" build
+tar -czvf "$CI_ARTIFACTS_PATH/coverage_$(date '+%Y%m%d_%H%M').tar.gz" "$JEST_COVERAGE_OUTPUT_DIR"
 
 cp ./junit.xml "$JEST_JUNIT_OUTPUT_DIR/junit_$(date '+%Y%m%d_%H%M').xml" 2>/dev/null || :
 
