@@ -2,6 +2,9 @@ console.log('Jest Config Loaded: maa-client/src/jest.config.js');
 console.log('JEST_JUNIT_OUTPUT_DIR=', process.env.JEST_JUNIT_OUTPUT_DIR);
 
 module.exports = {
+  setupFiles: [
+    '<rootDir>/window.setup.js'
+  ],
   moduleNameMapper:{
     "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
     "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js"
