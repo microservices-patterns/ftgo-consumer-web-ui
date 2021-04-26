@@ -29,11 +29,15 @@
     "reactstrap": "^8.9.0",
     "styled-components": "^5.2.3"
   },
+  "peerDependencies": {
+    "serve": "^11.3.2"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "$(npm bin)/jest --env=jest-environment-jsdom-sixteen --config=./src/jest.config.js --watchAll=false --bail --runInBand --reporters=default --reporters=jest-junit --collectCoverage=true --coverageDirectory=$JEST_COVERAGE_OUTPUT_DIR --unhandled-rejections=strict --verbose",
     "test:dev": "source ./ensure-variables-and-paths.sh && $(npm bin)/jest --env=jest-environment-jsdom-sixteen --config=./src/jest.config.js --watchAll=true --reporters=default --reporters=jest-junit --unhandled-rejections=strict --verbose",
+    "serve": "serve -s build -C -l 5000 --debug",
     "eject": "#react-scripts eject"
   },
   "eslintConfig": {

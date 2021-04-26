@@ -28,6 +28,12 @@ npm install -g serve  # if 'serve' is not installed
 serve -s build  # assuming the folder is called "build"
 ```
 
+or even with a single command:
+
+```shell
+npx serve -s build
+```
+
 When the `serve` command is run, the following output will inform you of how to view the web application:
 
 ```
@@ -44,3 +50,11 @@ When the `serve` command is run, the following output will inform you of how to 
    └──────────────────────────────────────────────────┘
    
 ```
+
+## Using Docker
+
+For a number of reasons if you need the app running in Docker, run the shell script:
+
+### `./start-http-server.sh`
+
+Presently it simply runs `docker-compose up -d --build`.

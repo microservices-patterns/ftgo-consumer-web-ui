@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    container_name: ftgo-frontend-web-app
+    build: .
+    image: node:12.22.1-alpine
+    ports:
+      - "5000:5000"
+    environment:
+      BACKEND_API_URL: ${FTGO_BACKEND_API_URL}
+
