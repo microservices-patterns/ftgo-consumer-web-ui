@@ -22,6 +22,7 @@ describe(`src/features/address/addressSlice.js`, () => {
       status: 'idle',
       value: null,
       error: null,
+      restaurantsArr: null,
       restaurants: expect.objectContaining({
         ids: expect.anything(),
         entities: expect.anything()
