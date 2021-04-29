@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Snippet } from './Snippet';
+import { Container } from 'reactstrap';
 
 export class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -38,7 +39,7 @@ export class ErrorBoundary extends React.Component {
 
     const errorText = String(this.state.error);
 
-    return <>
+    return <Container>
       <h3>Something went wrong</h3>
       <p>Please try to reload the page. If the problem persists please seek support <br />
         using the copy-pasted information below to describe what went wrong <br /> and by clicking the <button
@@ -54,7 +55,7 @@ export class ErrorBoundary extends React.Component {
         <button className="btn btn-sm btn-primary" onClick={ this.handleDismissError }>Dismiss</button>
       </p>
 
-    </>;
+    </Container>;
   }
 }
 

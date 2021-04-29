@@ -1,23 +1,12 @@
 import React from 'react';
-import styled from 'styled-components';
 import { LandingPageForm } from './landingPageForm';
+import { Container } from 'reactstrap';
+import { LargeTextDiv, LessLargeTextDiv } from '../../elements/textElements';
 
-
-const LargeTextDiv = styled.div`
-  font-size: 4rem;
-  font-weight: 800;
-  color: rgba(0, 0, 0, .75);
-`;
-
-const LessLargeTextDiv = styled.div`
-  font-size: 3rem;
-  font-weight: 800;
-  color: rgba(0, 0, 0, .8);
-`;
 
 const LandingPage = () => {
 
-  return <div>
+  return <Container>
     <div className="mb-5 mx-auto pt-3">
       <LargeTextDiv className="text-center">FTGO Application</LargeTextDiv>
       <LessLargeTextDiv className="text-center">Pick delivery address and time:</LessLargeTextDiv>
@@ -25,7 +14,7 @@ const LandingPage = () => {
     <div className="mx-auto">
       <LandingPageForm />
     </div>
-  </div>;
+  </Container>;
 };
 
 export default LandingPage;

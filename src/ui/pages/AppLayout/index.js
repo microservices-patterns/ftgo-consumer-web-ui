@@ -57,11 +57,11 @@ export const AppLayout = () => {
     </header>
 
     <div className="p-2" />
-    <Container>
-      <ErrorBoundary>
-        <RootRoutes />
-      </ErrorBoundary>
-    </Container>
+
+    <ErrorBoundary>
+      <RootRoutes />
+    </ErrorBoundary>
+
   </div>;
 };
 

@@ -16,6 +16,7 @@ const initialState = {
   status: 'idle',
   value: null,
   error: null,
+  restaurantsArr: null,
   restaurants: restaurantsAdapter.getInitialState()
 };
 
@@ -39,8 +40,7 @@ export const retrieveRestaurantsForAddress = createAsyncThunk(
 
     dispatch(keepAddressAndTime({ address, time, now }));
     // TODO: convert it into correct reducer
-    dispatch(keepRestaurants(response?.data));
-    debugger;
+    dispatch(keepRestaurants(response?.data?.restaurants));
     dispatch(navigateToPickRestaurants());
     return response?.data;
   }
@@ -63,7 +63,7 @@ export const addressSlice = createSlice({
       state.origin = action.payload.now;
     },
     keepRestaurants(state, action) {
-      state.restaurants = action.payload;
+      state.restaurantsArr = action.payload;
     }
   },
   extraReducers: (builder) => builder
@@ -72,6 +72,7 @@ export const addressSlice = createSlice({
     })
     .addCase(retrieveRestaurantsForAddress.fulfilled, (state, { payload }) => {
       state.status = 'idle';
+      debugger;
       restaurantsAdapter.setAll(state.restaurants, payload.restaurants);
     })
     .addCase(retrieveRestaurantsForAddress.rejected, (state, action) => {
@@ -86,6 +87,6 @@ export const accessAddressStatus = () => ({ [ ns ]: state }) => state.status;
 export const accessDeliveryAddress = () => ({ [ ns ]: state }) => state.address;
 export const accessDeliveryTime = () => ({ [ ns ]: state }) => state.time;
 export const accessDeliveryTimeBlock = () => ({ [ ns ]: state }) => (state.time && state.origin) ? ({ time: state.time, origin: state.origin }) : null;
-export const accessRestaurantsList = () => ({ [ ns ]: state }) => state.restaurants;
+export const accessRestaurantsList = () => ({ [ ns ]: state }) => state.restaurantsArr;
 
 export default addressSlice.reducer;
