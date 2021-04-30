@@ -22,8 +22,8 @@ const routesMap = [
 const routes = [
   routePaths.landing,
   routePaths.login,
-  routePaths.restaurants,
-  routePaths.restaurant
+  routePaths.restaurant,
+  routePaths.restaurants
 ].filter(Boolean)
   .map(item => typeof item === 'string' ?
     <Route key={ item } path={ item } { ...routesMap.get(item) } /> :

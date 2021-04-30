@@ -2,18 +2,17 @@ import {
   accessDeliveryAddress,
   accessDeliveryTime,
   accessRestaurantsList,
-  resetAddressAndTime,
   retrieveRestaurantsForAddress
 } from '../../../features/address/addressSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback, useEffect } from 'react';
-import { navigateToEditDeliveryAddress } from '../../../features/actions/navigation';
-import { IconEdit } from '../../elements/icons';
+import { useCallback, useEffect, useMemo } from 'react';
+import { navigateToEditMenu } from '../../../features/actions/navigation';
 import { Col, Container, Row } from 'reactstrap';
-import { LessLargeTextDiv, Span } from '../../elements/textElements';
-import { RoundedButton } from '../../elements/formElements';
+import { LessLargeTextDiv } from '../../elements/textElements';
 import BootstrapTable from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import { keepSelectedRestaurant } from '../../../features/restaurants/restaurantsSlice';
+import { SelectedAddressRow } from '../../components/SelectedAddressRow';
 
 export const RestaurantListPage = () => {
 
@@ -23,25 +22,15 @@ export const RestaurantListPage = () => {
   const restaurants = useSelector(accessRestaurantsList());
 
   useEffect(() => {
-    if (deliveryAddress && deliveryTime) {
-      return;
-    }
-    dispatch(resetAddressAndTime());
-    dispatch(navigateToEditDeliveryAddress());
-  }, [ deliveryAddress, deliveryTime, dispatch ]);
-
-  useEffect(() => {
     if (restaurants) {
       return;
     }
-    debugger;
+    if (!deliveryAddress || !deliveryTime) {
+      return;
+    }
     dispatch(retrieveRestaurantsForAddress({ address: deliveryAddress, time: deliveryTime }));
-
   }, [ deliveryAddress, deliveryTime, dispatch, restaurants ]);
 
-  const handleEditAddress = useCallback(() => {
-    dispatch(navigateToEditDeliveryAddress());
-  }, [ dispatch ]);
 
   const columns = [ {
     dataField: 'id',
@@ -62,21 +51,20 @@ export const RestaurantListPage = () => {
     order: 'desc'
   } ];
 
+  const handleRowSelect = useCallback((entry) => {
+    dispatch(keepSelectedRestaurant(entry));
+    debugger;
+    entry?.id && dispatch(navigateToEditMenu(entry.id));
+  }, [ dispatch ]);
+
+  const selectRow = useMemo(() => ({
+    mode: 'radio',
+    clickToSelect: true,
+    onSelect: handleRowSelect
+  }), [ handleRowSelect ]);
+
   return <div style={ { marginTop: '-1rem' } }>
-    <div className="navbar-shadow navbar">
-      <Container>
-        <Col sm={ 6 }>
-          <label className="font-weight-bold small">Deliver To:</label>
-          <address style={ { marginBottom: '0' } }>{ deliveryAddress }</address>
-        </Col><Col sm={ 4 }>
-        <label className="font-weight-bold small">Deliver At:</label>
-        <div>
-          <time dateTime={ deliveryTime }>{ deliveryTime }</time>
-        </div>
-      </Col><Col sm={ 2 } className="text-right">
-        <RoundedButton title="Edit delivery address and time" color="secondary" outline onClick={ handleEditAddress }><Span centerEditIcon><IconEdit /></Span></RoundedButton></Col>
-      </Container>
-    </div>
+    <SelectedAddressRow />
     <Container>
       <Row>
         <Col sm={ 3 }>
@@ -91,6 +79,7 @@ export const RestaurantListPage = () => {
             noDataIndication={ <>No restaurants</> }
             columns={ columns }
             defaultSorted={ defaultSorted }
+            selectRow={ selectRow }
             bordered={ false }
           />
         </Col>
