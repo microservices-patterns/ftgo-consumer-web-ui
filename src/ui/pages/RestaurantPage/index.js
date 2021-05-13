@@ -1,19 +1,15 @@
-import { accessSelectedRestaurant } from '../../../features/restaurants/restaurantsSlice';
-import { useSelector } from 'react-redux';
 import { SelectedAddressRow } from '../../components/SelectedAddressRow';
-import { Container } from 'reactstrap';
+import { Col, Container } from 'reactstrap';
+import { SelectedRestaurantRow } from '../../components/SelectedRestaurantRow';
 
-export const RestaurantPage = (props) => {
-  const selectedRestaurant = useSelector(accessSelectedRestaurant());
-  console.log(props, selectedRestaurant);
-  debugger;
+export const RestaurantPage = () => {
 
   return <div style={ { marginTop: '-1rem' } }>
     <SelectedAddressRow />
-    <Container><pre>Selected Restaurant ID:
-      {
-        selectedRestaurant
-      }</pre>
+    <SelectedRestaurantRow />
+    <Container className="d-flex">
+      <Col sm={ 8 }>Menu Items:</Col>
+      <Col sm={ 4 }>Your Tray:</Col>
     </Container>
   </div>;
 };

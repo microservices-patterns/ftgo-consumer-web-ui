@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo } from 'react';
 import { navigateToEditMenu } from '../../../features/actions/navigation';
-import { Col, Container, Row } from 'reactstrap';
+import { Col, Container } from 'reactstrap';
 import { LessLargeTextDiv } from '../../elements/textElements';
 import BootstrapTable from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -53,7 +53,6 @@ export const RestaurantListPage = () => {
 
   const handleRowSelect = useCallback((entry) => {
     dispatch(keepSelectedRestaurant(entry));
-    debugger;
     entry?.id && dispatch(navigateToEditMenu(entry.id));
   }, [ dispatch ]);
 
@@ -65,25 +64,23 @@ export const RestaurantListPage = () => {
 
   return <div style={ { marginTop: '-1rem' } }>
     <SelectedAddressRow />
-    <Container>
-      <Row>
-        <Col sm={ 3 }>
-          <LessLargeTextDiv size={ 2.5 } className="mb-2">Restaurants:</LessLargeTextDiv>
-          <LessLargeTextDiv size={ 1.25 }>Listing: <strong>{ String(restaurants?.length ?? 0) }</strong></LessLargeTextDiv>
-        </Col>
-        <Col sm={ 9 } className="py-2">
-          <BootstrapTable
-            bootstrap4
-            keyField="id"
-            data={ restaurants || [] }
-            noDataIndication={ <>No restaurants</> }
-            columns={ columns }
-            defaultSorted={ defaultSorted }
-            selectRow={ selectRow }
-            bordered={ false }
-          />
-        </Col>
-      </Row>
+    <Container className="d-flex">
+      <Col sm={ 3 }>
+        <LessLargeTextDiv size={ 2.5 } className="mb-2">Restaurants:</LessLargeTextDiv>
+        <LessLargeTextDiv size={ 1.25 }>Listing: <strong>{ String(restaurants?.length ?? 0) }</strong></LessLargeTextDiv>
+      </Col>
+      <Col sm={ 9 } className="py-2">
+        <BootstrapTable
+          bootstrap4
+          keyField="id"
+          data={ restaurants || [] }
+          noDataIndication={ <>No restaurants</> }
+          columns={ columns }
+          defaultSorted={ defaultSorted }
+          selectRow={ selectRow }
+          bordered={ false }
+        />
+      </Col>
     </Container>
 
   </div>;

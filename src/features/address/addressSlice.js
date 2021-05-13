@@ -20,6 +20,8 @@ const initialState = {
   restaurants: restaurantsAdapter.getInitialState()
 };
 
+const { selectById: selectRestaurantById } = restaurantsAdapter.getSelectors();
+
 const ns = 'address';
 
 export const retrieveRestaurantsForAddress = createAsyncThunk(
@@ -72,7 +74,6 @@ export const addressSlice = createSlice({
     })
     .addCase(retrieveRestaurantsForAddress.fulfilled, (state, { payload }) => {
       state.status = 'idle';
-      debugger;
       restaurantsAdapter.setAll(state.restaurants, payload.restaurants);
     })
     .addCase(retrieveRestaurantsForAddress.rejected, (state, action) => {
@@ -88,5 +89,5 @@ export const accessDeliveryAddress = () => ({ [ ns ]: state }) => state.address;
 export const accessDeliveryTime = () => ({ [ ns ]: state }) => state.time;
 export const accessDeliveryTimeBlock = () => ({ [ ns ]: state }) => (state.time && state.origin) ? ({ time: state.time, origin: state.origin }) : null;
 export const accessRestaurantsList = () => ({ [ ns ]: state }) => state.restaurantsArr;
-
+export const accessRestaurantInfo = (id) => ({ [ns]: state }) => selectRestaurantById(state.restaurants, id);
 export default addressSlice.reducer;

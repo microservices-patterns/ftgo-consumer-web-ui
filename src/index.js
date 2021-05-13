@@ -13,3 +13,4 @@ ReactDOM.render(rootAppNode,
 serviceWorker.unregister();
 export { LessLargeTextDiv } from './ui/elements/textElements';
 export { LargeTextDiv } from './ui/elements/textElements';
+export { SelectedRestaurantRow } from './ui/components/SelectedRestaurantRow';

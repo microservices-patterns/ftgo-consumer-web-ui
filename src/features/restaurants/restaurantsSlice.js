@@ -15,14 +15,14 @@ export const restaurantsSlice = createSlice({
     },
     keepSelectedRestaurant(state, { payload }) {
       debugger;
-      state.selectedRestaurant = payload?.id;
+      state.selectedRestaurantId = payload?.id;
     }
   }
 });
 
 export const { resetSelectedRestaurant, keepSelectedRestaurant } = restaurantsSlice.actions;
 
-export const accessSelectedRestaurant = () => ({ [ ns ]: state }) => state.selectedRestaurant;
+export const accessSelectedRestaurantId = () => ({ [ ns ]: state }) => state.selectedRestaurantId;
 
 const namedReducer = {
   [ ns ]: restaurantsSlice.reducer
