@@ -5,7 +5,7 @@ import { navigateToEditDeliveryAddress } from '../../features/actions/navigation
 import { Col, Container } from 'reactstrap';
 import { RoundedButton } from '../elements/formElements';
 import { Span } from '../elements/textElements';
-import { IconEdit } from '../elements/icons';
+import { IconGeo, IconEdit } from '../elements/icons';
 
 export const SelectedAddressRow = () => {
 
@@ -27,17 +27,17 @@ export const SelectedAddressRow = () => {
 
 
   return (<div className="navbar-shadow navbar">
-    <Container>
-      <Col sm={ 6 }>
+    <Container className="align-items-sm-start">
+      <Col sm={ 8 }>
         <label className="font-weight-bold small">Deliver To:</label>
-        <address style={ { marginBottom: '0' } }>{ deliveryAddress }</address>
-      </Col><Col sm={ 4 }>
+        <address style={ { marginBottom: '0' } }><IconGeo /> { deliveryAddress }</address>
+      </Col><Col sm={ 2 }>
       <label className="font-weight-bold small">Deliver At:</label>
       <div>
-        <time dateTime={ deliveryTime }>{ deliveryTime }</time>
+        <time dateTime={ deliveryTime } className="font-weight-bold">{ deliveryTime }</time>
       </div>
-    </Col><Col sm={ 2 } className="text-right">
-      <RoundedButton title="Edit delivery address and time" color="secondary" outline onClick={ handleEditAddress }><Span centerEditIcon><IconEdit /></Span></RoundedButton></Col>
+    </Col><Col sm={ 2 } className="text-right align-self-sm-center">
+      <RoundedButton title="Edit delivery address and time" color="secondary" size="sm" outline onClick={ handleEditAddress }><Span centerEditIcon><IconEdit /></Span></RoundedButton></Col>
     </Container>
   </div>);
 };

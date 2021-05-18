@@ -7,6 +7,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "jest-environment-jsdom-sixteen": "^1.0.3",
+    "jest-fetch-mock": "^3.0.3",
     "jest-junit": "^12.0.0",
     "node-sass": "^5.0.0"
   },
@@ -41,6 +42,7 @@
     "serve": "serve -s build -C -l 5000 --debug",
     "eject": "#react-scripts eject"
   },
+  "proxy": "http://localhost:8080",
   "eslintConfig": {
     "extends": "react-app"
   },

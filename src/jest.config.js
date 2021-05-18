@@ -2,7 +2,8 @@ console.log('Jest Config Loaded: maa-client/src/jest.config.js');
 console.log('JEST_JUNIT_OUTPUT_DIR=', process.env.JEST_JUNIT_OUTPUT_DIR);
 
 module.exports = {
-  setupFiles: [
+  setupFilesAfterEnv: [
+    './setupTests.js',
     '<rootDir>/window.setup.js'
   ],
   moduleNameMapper:{

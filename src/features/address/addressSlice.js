@@ -1,13 +1,15 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { fetchRestaurants } from './addressAPI';
 import { safelyExecuteAsync } from '../../shared/promises';
 import { navigateToPickRestaurants } from '../actions/navigation';
+import { getRestaurantById, postAddressObtainRestaurants } from '../actions/api';
 
 
 const restaurantsAdapter = createEntityAdapter({
   selectId: ({ id }) => id,
   sortComparer: ({ id: a }, { id: b }) => a.localeCompare(b)
 });
+
+const { selectById: selectRestaurantById, selectAll: selectAllRestaurants } = restaurantsAdapter.getSelectors();
 
 const initialState = {
   address: null,
@@ -16,16 +18,14 @@ const initialState = {
   status: 'idle',
   value: null,
   error: null,
-  restaurantsArr: null,
   restaurants: restaurantsAdapter.getInitialState()
 };
 
-const { selectById: selectRestaurantById } = restaurantsAdapter.getSelectors();
 
 const ns = 'address';
 
 export const retrieveRestaurantsForAddress = createAsyncThunk(
-  'address/fetchRestaurants',
+  'address/postAddressObtainRestaurants',
   /**
    *
    * @param { { address: string, time: string, now: number }} data
@@ -35,19 +35,34 @@ export const retrieveRestaurantsForAddress = createAsyncThunk(
    */
   async (data, { rejectWithValue, dispatch }) => {
     const { address, time, now = (new Date() - 0) } = data;
-    const [ err, response ] = await safelyExecuteAsync(fetchRestaurants(address, time, now));
+    const [ err, payload ] = await safelyExecuteAsync(postAddressObtainRestaurants(address, time, now));
     if (err) {
       return rejectWithValue(err);
     }
 
     dispatch(keepAddressAndTime({ address, time, now }));
     // TODO: convert it into correct reducer
-    dispatch(keepRestaurants(response?.data?.restaurants));
+    //    dispatch(keepRestaurants(response?.data?.restaurants));
     dispatch(navigateToPickRestaurants());
-    return response?.data;
+    return payload;
   }
 );
 
+
+export const retrieveRestaurantByIdAsyncThunk = createAsyncThunk(
+  'restaurant/fetchById',
+  async (data, { dispatch }) => {
+    debugger;
+    if (!data) {
+      return;
+    }
+    const { restaurantId } = data;
+    if (!restaurantId) {
+      return;
+    }
+    return getRestaurantById(restaurantId);
+  }
+);
 
 
 export const addressSlice = createSlice({
@@ -63,9 +78,6 @@ export const addressSlice = createSlice({
       state.address = action.payload.address;
       state.time = action.payload.time;
       state.origin = action.payload.now;
-    },
-    keepRestaurants(state, action) {
-      state.restaurantsArr = action.payload;
     }
   },
   extraReducers: (builder) => builder
@@ -79,15 +91,38 @@ export const addressSlice = createSlice({
     .addCase(retrieveRestaurantsForAddress.rejected, (state, action) => {
       state.status = 'error';
       state.error = action.error;
-    })
+    }).addCase(
+      retrieveRestaurantByIdAsyncThunk.pending, state => {
+        debugger;
+        state.status = 'loading';
+      }
+    ).addCase(
+      retrieveRestaurantByIdAsyncThunk.fulfilled, (state, { payload }) => {
+        state.status = 'idle';
+        debugger;
+        if (!payload) {
+          return;
+        }
+        restaurantsAdapter.addOne(state.restaurants, payload);
+      }
+    ).addCase(
+      retrieveRestaurantByIdAsyncThunk.rejected, (state, action) => {
+        debugger;
+        state.status = 'error';
+        state.error = action.error;
+      }
+    )
 });
 
-export const { keepAddressAndTime, keepRestaurants, resetAddressAndTime } = addressSlice.actions;
+export const { keepAddressAndTime, /*keepRestaurants, */resetAddressAndTime } = addressSlice.actions;
 
 export const accessAddressStatus = () => ({ [ ns ]: state }) => state.status;
 export const accessDeliveryAddress = () => ({ [ ns ]: state }) => state.address;
 export const accessDeliveryTime = () => ({ [ ns ]: state }) => state.time;
-export const accessDeliveryTimeBlock = () => ({ [ ns ]: state }) => (state.time && state.origin) ? ({ time: state.time, origin: state.origin }) : null;
-export const accessRestaurantsList = () => ({ [ ns ]: state }) => state.restaurantsArr;
-export const accessRestaurantInfo = (id) => ({ [ns]: state }) => selectRestaurantById(state.restaurants, id);
+export const accessDeliveryTimeBlock = () => ({ [ ns ]: state }) => (state.time && state.origin) ? ({
+  time: state.time,
+  origin: state.origin
+}) : null;
+export const accessRestaurantsList = () => ({ [ ns ]: state }) => selectAllRestaurants(state.restaurants);
+export const accessRestaurantInfo = (id) => ({ [ ns ]: state }) => selectRestaurantById(state.restaurants, id);
 export default addressSlice.reducer;

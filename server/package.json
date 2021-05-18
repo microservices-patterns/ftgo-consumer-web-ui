@@ -1,0 +1,52 @@
+{
+  "name": "express-es6-rest-api",
+  "version": "0.3.0",
+  "description": "Starter project for an ES6 RESTful Express API",
+  "main": "dist",
+  "scripts": {
+    "dev": "PORT=8080 nodemon -w src --exec \"babel-node src --presets @babel/preset-env\"",
+    "build": "babel src -s -D -d dist --presets env",
+    "start": "node dist",
+    "prestart": "npm run -s build",
+    "test": "eslint src"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+
+    "parserOptions": {
+      "ecmaVersion": 7,
+      "sourceType": "module",
+      "ecmaFeatures": {
+
+        "restParams": true
+      }
+    },
+    "env": {
+      "node": true
+    },
+    "rules": {
+      "no-console": 0,
+      "no-unused-vars": 1,
+      "no-debugger": "off"
+    }
+  },
+  "repository": "developit/express-es6-rest-api",
+  "author": "Jason Miller <jason@developit.ca>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "resource-router-middleware": "^0.7.0"
+  },
+  "devDependencies": {
+    "@babel/node": "^7.14.2",
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.2",
+    "eslint": "^7.26.0",
+    "nodemon": "^2.0.7"
+  }
+}
