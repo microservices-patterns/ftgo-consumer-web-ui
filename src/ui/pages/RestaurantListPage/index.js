@@ -59,6 +59,9 @@ export const RestaurantListPage = () => {
   const selectRow = useMemo(() => ({
     mode: 'radio',
     clickToSelect: true,
+    selectionHeaderRenderer: () => null,
+    selectionRenderer: ({ mode, ...rest }) => null,
+    style: { backgroundColor: '#c8e6c980' },
     onSelect: handleRowSelect
   }), [ handleRowSelect ]);
 
@@ -72,6 +75,7 @@ export const RestaurantListPage = () => {
       <Col sm={ 9 } className="py-2">
         <BootstrapTable
           bootstrap4
+          hover
           keyField="id"
           data={ restaurants || [] }
           noDataIndication={ <>No restaurants</> }

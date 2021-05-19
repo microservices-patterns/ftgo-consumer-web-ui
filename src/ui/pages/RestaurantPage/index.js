@@ -1,5 +1,5 @@
 import { SelectedAddressRow } from '../../components/SelectedAddressRow';
-import { Col, Container } from 'reactstrap';
+import { Button, Col, Container } from 'reactstrap';
 import { SelectedRestaurantRow } from '../../components/SelectedRestaurantRow';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -8,17 +8,22 @@ import {
   accessSelectedRestaurantId,
   resetSelectedRestaurant
 } from '../../../features/restaurants/restaurantsSlice';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { navigateToEditDeliveryAddress } from '../../../features/actions/navigation';
 import { retrieveRestaurantByIdAsyncThunk } from '../../../features/address/addressSlice';
 import BootstrapTable from 'react-bootstrap-table-next';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import './menuItems.scss';
+
+function countItemsInCart(id, cart) {
+  return /[02468]$/.test(id) ? 0 : 1;
+}
 
 function AvailableMenuItems({ restaurantId }) {
 
   const dispatch = useDispatch();
   const menuState = useSelector(accessRestaurantMenuState(restaurantId));
   const menuList = useSelector(accessMenuForRestaurant(restaurantId));
-  void menuList;
 
   useEffect(() => {
     if (menuState === 'ready') {
@@ -28,31 +33,49 @@ function AvailableMenuItems({ restaurantId }) {
     dispatch(retrieveRestaurantByIdAsyncThunk({ restaurantId }));
   }, [ dispatch, menuState, restaurantId ]);
 
-  const selectRow = useMemo(() => ({
-    mode: 'radio'
+  const selectRowProps = useMemo(() => ({
+    mode: 'radio',
+    clickToSelect: true,
+    selectionHeaderRenderer: () => null,
+    selectionRenderer: ({ mode, ...rest }) => null,
+    style: { backgroundColor: '#c8e6c980' }
   }), []);
 
-  const columns = [ {
-    dataField: 'id',
-    text: 'Ref ID',
-    sort: true
-  }, {
-    dataField: 'name',
-    text: 'Food Item',
-    sort: true
-  }, {
-    dataField: 'cuisine_name',
-    text: 'Cuisine',
-    sort: true
-  }, {
-    dataField: 'category_name',
-    text: 'Category',
-    sort: true
-  }, {
-    dataField: 'price',
-    text: 'Price',
-    sort: true
-  } ];
+  const handleAddToCart = useCallback(() => {}, []);
+
+  const columns = [
+    {
+      dataField: 'id',
+      text: 'Ref ID',
+      sort: true
+    }, {
+      dataField: 'name',
+      text: 'Food Item',
+      sort: true
+    }, {
+      dataField: 'cuisine_name',
+      text: 'Cuisine',
+      sort: true
+    }, {
+      dataField: 'category_name',
+      text: 'Category',
+      sort: true
+    }, {
+      dataField: 'price',
+      text: 'Price',
+      sort: true
+    }, {
+      dataField: 'actions',
+      isDummyField: true,
+      text: 'Action',
+      formatter: (cellContent, row, ...args) => {
+        if (row.meta?.itemsInCart) {
+          return <Button color={ 'success' } size={ 'sm' } onClick={ handleAddToCart }>+1</Button>;
+        }
+        return <Button color={ 'info' } size={ 'sm' } onClick={ handleAddToCart }>Add</Button>;
+      }
+    }
+  ];
 
   const defaultSorted = [ {
     dataField: 'name',
@@ -80,16 +103,26 @@ function AvailableMenuItems({ restaurantId }) {
     return <>Updating the menu...</>;
   }
 
+  const cart = [];
+
+  const zippedList = menuList ? menuList.map(item => Object.assign({}, item, { meta: {
+    itemsInCart: countItemsInCart(item.id, cart)
+    } })) : [];
+
   return <BootstrapTable
     bootstrap4
     hover
     keyField="id"
-    data={ menuList || [] }
+    data={ zippedList || [] }
     noDataIndication={ <>Menu is temporarily empty</> }
     columns={ columns }
     defaultSorted={ defaultSorted }
-    selectRow={ selectRow }
+    selectRow={ selectRowProps }
     bordered={ false }
+    pagination={ paginationFactory({
+      sizePerPage: 5,
+      sizePerPageList: [ 5, 10, 25, 30, 50 ]
+    }) }
   />;
 }
 

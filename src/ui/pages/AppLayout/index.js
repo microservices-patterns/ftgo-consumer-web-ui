@@ -22,10 +22,15 @@ const CustomizedNavbarBrand = styled(NavbarBrand)`
 
 export const AppLayout = () => {
 
-  const isLoading = useSelector(accessIsLoading())
+  const isLoading = useSelector(accessIsLoading());
 
   return <div className="AppLayout">
     <header>
+      <div style={ { position: 'relative', width: '100%' } }>{
+        isLoading &&
+        <div style={ { position: 'absolute', top: '1rem', right: '1rem', width: '2rem', height: '2rem' } }>
+          <LoadingSpinner inline /></div>
+      }</div>
       <Navbar className="navbar-shadow">
         <Container className="flex-column flex-sm-row justify-content-between align-content-center">
           <div className="navbar-header align-self-center">
@@ -46,10 +51,6 @@ export const AppLayout = () => {
               <NavLink disabled tag={ RoutingLink } to="/">Order</NavLink>
             </NavItem>
           </Nav>
-          {
-            isLoading &&
-            <div className="align-self-center order-3"><LoadingSpinner inline /></div>
-          }
           <div className="align-self-center">UserButton <br /> (Logged in)</div>
         </Container>
 

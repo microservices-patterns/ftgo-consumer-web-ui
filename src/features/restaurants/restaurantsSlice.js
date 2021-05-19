@@ -30,23 +30,34 @@ export const restaurantsSlice = createSlice({
   },
   extraReducers: builder => builder.addCase(
     retrieveRestaurantByIdAsyncThunk.pending, (state, { payload, meta }) => {
-      console.log(payload, meta);
-      debugger;
+      if (!meta) {
+        return;
+      }
       const { restaurantId } = meta.arg;
       state.menuState[ restaurantId ] = 'loading';
       state.menus[ restaurantId ] = menuAdapter.getInitialState();
     }
   ).addCase(
     retrieveRestaurantByIdAsyncThunk.fulfilled, (state, { payload, meta }) => {
-      console.log(payload, meta);
-      debugger;
-      const { restaurantId } = meta.arg;
+      if (!payload) {
+        return;
+      }
+      const { restaurantId } = meta.arg ?? {};
+      if (!restaurantId) {
+        return;
+      }
       state.menuState[ restaurantId ] = 'ready';
       menuAdapter.setAll(state.menus[ restaurantId ], payload.menu);
     }
   ).addCase(
     retrieveRestaurantByIdAsyncThunk.rejected, (state, { payload, meta }) => {
-      const { restaurantId } = meta.arg;
+      if (!meta) {
+        return;
+      }
+      const { restaurantId } = meta.arg ?? {};
+      if (!restaurantId) {
+        return;
+      }
       state.menuState[ restaurantId ] = undefined;
     }
   )

@@ -1,9 +1,9 @@
 // our example model is just an Array
 const restaurants = [
-//  {
-//    'id': '0',
-//    'name': 'Imitates a server-side error',
-//  },
+  //  {
+  //    'id': '0',
+  //    'name': 'Imitates a server-side error',
+  //  },
   {
     'id': '10',
     'name': 'Imitates a restaurant with zero menu items',
@@ -39,6 +39,12 @@ const restaurants = [
     'address': 'Third Floor, Mega Fashion Hall, SM Megamall, Ortigas, Mandaluyong City',
     'delivery-fee': 75.00,
     avgDeliveryTime: 60
+  }, {
+    'id': '63185068',
+    'name': 'All-Ooma - All items',
+    'address': 'Fourth Floor, Mega Fashion Hall, SM Megamall, Ortigas, Mandaluyong City',
+    'delivery-fee': 80.00,
+    avgDeliveryTime: 55
   },
 ];
 export default restaurants;
