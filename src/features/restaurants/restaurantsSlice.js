@@ -24,7 +24,6 @@ export const restaurantsSlice = createSlice({
       state.selectedRestaurant = null;
     },
     keepSelectedRestaurant(state, { payload }) {
-      debugger;
       state.selectedRestaurantId = payload?.id;
     }
   },

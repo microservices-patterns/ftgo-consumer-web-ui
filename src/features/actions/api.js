@@ -7,11 +7,15 @@ const apiRoutes = prepareRoutesForFetch({
     `POST ${ API_URL }/address`,
     (address, time, origin) => ({ address, time, origin })
   ],
-  getRestaurantById: restaurantId => `${ API_URL }/restaurants/${ restaurantId }`
+  getRestaurantById: restaurantId => `${ API_URL }/restaurants/${ restaurantId }`,
+  postCreateNewCart: `POST ${ API_URL }/cart`,
+  putUpdateCartWithItem: [
+    (cartId, restaurantId, itemId, qty) => `PUT ${ API_URL }/cart/${ cartId }`,
+    (cartId, restaurantId, itemId, qty) => ({ cartId, restaurantId, itemId, qty })
+  ]
 });
 
-export const { postAddressObtainRestaurants, getRestaurantById } = apiRoutes;
-
+export const { postAddressObtainRestaurants, getRestaurantById, putUpdateCartWithItem, postCreateNewCart } = apiRoutes;
 
 function prepareRoutesForFetch(routes) {
   return Object.fromEntries(Array.from(Object.entries(routes), ([ k, v ]) => {

@@ -9,10 +9,10 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { navigateToEditMenu } from '../../../features/actions/navigation';
 import { Col, Container } from 'reactstrap';
 import { LessLargeTextDiv } from '../../elements/textElements';
-import BootstrapTable from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { keepSelectedRestaurant } from '../../../features/restaurants/restaurantsSlice';
 import { SelectedAddressRow } from '../../components/SelectedAddressRow';
+import { PaginatedTable } from '../../elements/paginatedTable';
 
 export const RestaurantListPage = () => {
 
@@ -73,7 +73,7 @@ export const RestaurantListPage = () => {
         <LessLargeTextDiv size={ 1.25 }>Listing: <strong>{ String(restaurants?.length ?? 0) }</strong></LessLargeTextDiv>
       </Col>
       <Col sm={ 9 } className="py-2">
-        <BootstrapTable
+        <PaginatedTable
           bootstrap4
           hover
           keyField="id"
@@ -83,6 +83,13 @@ export const RestaurantListPage = () => {
           defaultSorted={ defaultSorted }
           selectRow={ selectRow }
           bordered={ false }
+          paginationOnTop
+          paginationFactoryOptions={ {
+            custom: true,
+            sizePerPage: 5,
+            sizePerPageList: [ 5, 10, 25, 30, 50 ],
+            hidePageListOnlyOnePage: true
+          } }
         />
       </Col>
     </Container>

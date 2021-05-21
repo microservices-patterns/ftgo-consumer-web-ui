@@ -3,7 +3,7 @@
  * @returns {{error:Function, debug:Function}}
  */
 
-  //export const getLogger = () => {
+//export const getLogger = () => {
   //  return [ 'log', 'warn', 'info', 'debug', 'error' ].reduce((obj, lvl) =>
   //    Object.assign(obj, { [ lvl ]: (...args) =>
   //        console[ lvl ](...args) }), {});
@@ -48,4 +48,41 @@ function getCircularRefsResolver() {
     }
     return value;
   };
+}
+
+
+/**
+ *
+ * @param arg
+ * @return {(function(...[*]): (*|undefined))|*}
+ */
+export function debugged(arg) {
+  if (typeof arg === 'function') {
+    return (...args) => {
+      try {
+        const result = arg(...args);
+
+        // result of the function execution (success)
+        console.log(...args);
+        console.log(result);
+        debugger;
+
+        return result;
+      } catch (ex) {
+
+        // result of the function execution (failure)
+        console.log(...args);
+        console.error(ex);
+        debugger;
+
+        throw ex;
+      }
+    };
+  }
+
+  // inspected non-callable argument
+  console.log(arg);
+  debugger;
+
+  return arg;
 }

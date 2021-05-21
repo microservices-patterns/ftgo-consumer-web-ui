@@ -2,6 +2,7 @@ import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/too
 import { safelyExecuteAsync } from '../../shared/promises';
 import { navigateToPickRestaurants } from '../actions/navigation';
 import { getRestaurantById, postAddressObtainRestaurants } from '../actions/api';
+import { resetCart } from '../cart/cartSlice';
 
 
 const restaurantsAdapter = createEntityAdapter({
@@ -40,10 +41,10 @@ export const retrieveRestaurantsForAddress = createAsyncThunk(
       return rejectWithValue(err);
     }
 
+    dispatch(resetCart());
     dispatch(keepAddressAndTime({ address, time, now }));
-    // TODO: convert it into correct reducer
-    //    dispatch(keepRestaurants(response?.data?.restaurants));
     dispatch(navigateToPickRestaurants());
+
     return payload;
   }
 );
@@ -125,4 +126,11 @@ export const accessDeliveryTimeBlock = () => ({ [ ns ]: state }) => (state.time 
 }) : null;
 export const accessRestaurantsList = () => ({ [ ns ]: state }) => selectAllRestaurants(state.restaurants);
 export const accessRestaurantInfo = (id) => ({ [ ns ]: state }) => selectRestaurantById(state.restaurants, id);
-export default addressSlice.reducer;
+
+
+const namedReducer = {
+  [ ns ]: addressSlice.reducer
+};
+
+
+export default namedReducer;

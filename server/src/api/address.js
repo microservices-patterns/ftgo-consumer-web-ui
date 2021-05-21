@@ -1,7 +1,7 @@
 import resource from 'resource-router-middleware';
 import restaurants from '../models/address';
 
-export default ({ config, db }) => resource({
+const addressResource = ({ config, db }) => resource({
 
   /** Property name to store preloaded entity on `request`. */
   id: 'facet',
@@ -64,3 +64,5 @@ export default ({ config, db }) => resource({
     res.sendStatus(501);
   }
 });
+
+export default addressResource;

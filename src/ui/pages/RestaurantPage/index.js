@@ -8,42 +8,59 @@ import {
   accessSelectedRestaurantId,
   resetSelectedRestaurant
 } from '../../../features/restaurants/restaurantsSlice';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import curry from 'lodash-es/curry';
 import { navigateToEditDeliveryAddress } from '../../../features/actions/navigation';
 import { retrieveRestaurantByIdAsyncThunk } from '../../../features/address/addressSlice';
-import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import './menuItems.scss';
+import { PaginatedTable } from '../../elements/paginatedTable';
+import {
+  accessCart,
+  accessCartItems,
+  accessCartStatus,
+  obtainNewCartAsyncThunk,
+  updateCartWithItemAsyncThunk
+} from '../../../features/cart/cartSlice';
 
-function countItemsInCart(id, cart) {
-  return /[02468]$/.test(id) ? 0 : 1;
-}
 
 function AvailableMenuItems({ restaurantId }) {
 
   const dispatch = useDispatch();
   const menuState = useSelector(accessRestaurantMenuState(restaurantId));
   const menuList = useSelector(accessMenuForRestaurant(restaurantId));
+  const cartId = useSelector(accessCart('id'));
+  const cartStatus = useSelector(accessCartStatus());
+  const cartItems = useSelector(accessCartItems());
 
   useEffect(() => {
-    if (menuState === 'ready') {
+    if (menuState) {
       return;
     }
     debugger;
     dispatch(retrieveRestaurantByIdAsyncThunk({ restaurantId }));
   }, [ dispatch, menuState, restaurantId ]);
 
-  const selectRowProps = useMemo(() => ({
-    mode: 'radio',
-    clickToSelect: true,
-    selectionHeaderRenderer: () => null,
-    selectionRenderer: ({ mode, ...rest }) => null,
-    style: { backgroundColor: '#c8e6c980' }
-  }), []);
+  useEffect(() => {
+    if (cartStatus) {
+      return;
+    }
+    debugger;
+    dispatch(obtainNewCartAsyncThunk());
+  }, [ cartStatus, dispatch ]);
 
-  const handleAddToCart = useCallback(() => {}, []);
 
-  const columns = [
+  const cartItemsMap = useMemo(() => new Map(cartItems.map(i => [ i.id, i ])), [ cartItems ]);
+  const handleAddToCart = useMemo(() => cartId ? curry((item, qty, _) => {
+    console.log(item, qty);
+    debugger;
+    dispatch(updateCartWithItemAsyncThunk({
+      cartId, restaurantId, itemId: item.id, qty, item
+    }));
+  }) : (a, b) => (c) => {
+    console.log(a, b, c);
+    debugger;
+  }, [ cartId, dispatch, restaurantId ]);
+
+  const columns = useMemo(() => ([
     {
       dataField: 'id',
       text: 'Ref ID',
@@ -68,14 +85,15 @@ function AvailableMenuItems({ restaurantId }) {
       dataField: 'actions',
       isDummyField: true,
       text: 'Action',
-      formatter: (cellContent, row, ...args) => {
-        if (row.meta?.itemsInCart) {
-          return <Button color={ 'success' } size={ 'sm' } onClick={ handleAddToCart }>+1</Button>;
+      formatter: (cellContent, row) => {
+        if (cartItemsMap.has(row.id)) {
+          const item = cartItemsMap.get(row.id);
+          return <Button color={ 'success' } size={ 'sm' } disabled={ !cartId || (item.oldCount !== undefined) } onClick={ handleAddToCart(row, 1) }>+1</Button>;
         }
-        return <Button color={ 'info' } size={ 'sm' } onClick={ handleAddToCart }>Add</Button>;
+        return <Button color={ 'info' } size={ 'sm' } disabled={ !cartId } onClick={ handleAddToCart(row, 1) }>Add</Button>;
       }
     }
-  ];
+  ]), [ cartId, cartItemsMap, handleAddToCart ]);
 
   const defaultSorted = [ {
     dataField: 'name',
@@ -103,32 +121,72 @@ function AvailableMenuItems({ restaurantId }) {
     return <>Updating the menu...</>;
   }
 
-  const cart = [];
-
-  const zippedList = menuList ? menuList.map(item => Object.assign({}, item, { meta: {
-    itemsInCart: countItemsInCart(item.id, cart)
-    } })) : [];
-
-  return <BootstrapTable
+  return <PaginatedTable
     bootstrap4
     hover
     keyField="id"
-    data={ zippedList || [] }
+    data={ menuList || [] }
     noDataIndication={ <>Menu is temporarily empty</> }
     columns={ columns }
     defaultSorted={ defaultSorted }
-    selectRow={ selectRowProps }
     bordered={ false }
-    pagination={ paginationFactory({
+    paginationOnTop
+    paginationFactoryOptions={ {
+      custom: true,
       sizePerPage: 5,
-      sizePerPageList: [ 5, 10, 25, 30, 50 ]
-    }) }
+      sizePerPageList: [ 5, 10, 25, 30, 50 ],
+      hidePageListOnlyOnePage: true
+    } }
   />;
+
 }
 
-function YourTrayItems({ sessionId }) {
-  void sessionId;
-  return null;
+function YourTrayItems() {
+
+  const cartId = useSelector(accessCart('id'));
+  const cartStatus = useSelector(accessCartStatus());
+  const cartItems = useSelector(accessCartItems());
+
+
+  const columns = [
+    {
+      dataField: 'id',
+      text: 'Ref ID'
+    }, {
+      dataField: 'name',
+      text: 'Food Item',
+      sort: true
+    }, {
+      dataField: 'count',
+      text: 'Qty'
+    }
+  ];
+
+  const defaultSorted = [ {
+    dataField: 'name',
+    order: 'desc'
+  } ];
+
+  if (!cartId || (cartStatus !== 'ready')) {
+    return <>Updating the tray...</>;
+  }
+  return <PaginatedTable
+    bootstrap4
+    hover
+    keyField="id"
+    data={ cartItems || [] }
+    noDataIndication={ <>Add food to your tray</> }
+    columns={ columns }
+    defaultSorted={ defaultSorted }
+    bordered={ false }
+    paginationOnTop
+    paginationFactoryOptions={ {
+      custom: true,
+      sizePerPage: 5,
+      sizePerPageList: [ 5, 10, 25, 30, 50 ],
+      hidePageListOnlyOnePage: true
+    } }
+  />;
 }
 
 
@@ -158,7 +216,7 @@ export const RestaurantPage = ({ match }) => {
       </Col>
       <Col sm={ 4 } className="py-2">
         <h2>Your Tray:</h2>
-        <YourTrayItems sessionId={ selectedRestaurantId } />
+        <YourTrayItems />
       </Col>
     </Container>
   </div>;
