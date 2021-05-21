@@ -20,6 +20,7 @@ import {
   obtainNewCartAsyncThunk,
   updateCartWithItemAsyncThunk
 } from '../../../features/cart/cartSlice';
+import { IconPlus, IconMinus, IconCartPlus } from '../../elements/icons';
 
 
 function AvailableMenuItems({ restaurantId }) {
@@ -30,6 +31,8 @@ function AvailableMenuItems({ restaurantId }) {
   const cartId = useSelector(accessCart('id'));
   const cartStatus = useSelector(accessCartStatus());
   const cartItems = useSelector(accessCartItems());
+  const cartHash = useSelector(accessCart('hash'));
+
 
   useEffect(() => {
     if (menuState) {
@@ -48,7 +51,7 @@ function AvailableMenuItems({ restaurantId }) {
   }, [ cartStatus, dispatch ]);
 
 
-  const cartItemsMap = useMemo(() => new Map(cartItems.map(i => [ i.id, i ])), [ cartItems ]);
+  const cartItemsMap = useMemo(() => new Map(cartItems.map(i => [ i.id, i ])), [ cartItems, cartHash ]);
   const handleAddToCart = useMemo(() => cartId ? curry((item, qty, _) => {
     console.log(item, qty);
     debugger;
@@ -88,12 +91,12 @@ function AvailableMenuItems({ restaurantId }) {
       formatter: (cellContent, row) => {
         if (cartItemsMap.has(row.id)) {
           const item = cartItemsMap.get(row.id);
-          return <Button color={ 'success' } size={ 'sm' } disabled={ !cartId || (item.oldCount !== undefined) } onClick={ handleAddToCart(row, 1) }>+1</Button>;
+          return <Button color={ 'success' } size={ 'sm' } disabled={ !cartId || (item.oldCount !== undefined) } onClick={ handleAddToCart(row, 1) }><IconPlus /></Button>;
         }
-        return <Button color={ 'info' } size={ 'sm' } disabled={ !cartId } onClick={ handleAddToCart(row, 1) }>Add</Button>;
+        return <Button color={ 'info' } size={ 'sm' } disabled={ !cartId } onClick={ handleAddToCart(row, 1) }><IconCartPlus /></Button>;
       }
     }
-  ]), [ cartId, cartItemsMap, handleAddToCart ]);
+  ]), [ cartId, cartItemsMap, handleAddToCart, cartHash ]);
 
   const defaultSorted = [ {
     dataField: 'name',
@@ -143,12 +146,25 @@ function AvailableMenuItems({ restaurantId }) {
 
 function YourTrayItems() {
 
+  const dispatch = useDispatch();
   const cartId = useSelector(accessCart('id'));
   const cartStatus = useSelector(accessCartStatus());
   const cartItems = useSelector(accessCartItems());
+  const cartHash = useSelector(accessCart('hash'));
 
+  const handleAddToCart = useMemo(() => cartId ? curry((item, qty, _) => {
+    const { restaurantId } = item.meta || {};
+    console.log(item, qty);
+    debugger;
+    dispatch(updateCartWithItemAsyncThunk({
+      cartId, restaurantId, itemId: item.id, qty, item
+    }));
+  }) : (a, b) => (c) => {
+    console.log(a, b, c);
+    debugger;
+  }, [ cartId, dispatch ]);
 
-  const columns = [
+  const columns = useMemo(() => ([
     {
       dataField: 'id',
       text: 'Ref ID'
@@ -159,8 +175,22 @@ function YourTrayItems() {
     }, {
       dataField: 'count',
       text: 'Qty'
+    },
+    {
+      dataField: 'actions',
+      isDummyField: true,
+      text: 'Action',
+      formatter: (cellContent, row) => {
+        const disabled = !cartId || typeof row.oldCount !== 'undefined';
+        return <div className="d-flex flex-row">
+          <Button color={ 'info' } size={ 'sm' } disabled={ disabled || (row.count === 0) } onClick={ handleAddToCart(row, -1) }><IconMinus /></Button>
+          <label className={ disabled ? 'text-muted' : '' }> { row.count } </label>
+          <Button color={ 'info' } size={ 'sm' } disabled={ disabled } onClick={ handleAddToCart(row, 1) }><IconPlus /></Button>
+        </div>;
+      }
     }
-  ];
+
+  ]), [ cartId, handleAddToCart, cartHash ]);
 
   const defaultSorted = [ {
     dataField: 'name',
@@ -170,6 +200,7 @@ function YourTrayItems() {
   if (!cartId || (cartStatus !== 'ready')) {
     return <>Updating the tray...</>;
   }
+
   return <PaginatedTable
     bootstrap4
     hover

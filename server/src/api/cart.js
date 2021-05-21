@@ -27,12 +27,35 @@ const cartResource = ({ config, db }) => resource({
   },
 
   /** PUT /:id - Update a given entity */
-  update({ [facetName]: facet, body }, res) {
+  update({ body, ...req }, res) {
 
-    console.log(facet, body);
+    const id = req.params[facetName];
+    console.log(id, body);
     debugger;
 
-    res.sendStatus(501);
+    if (inMemoCart.current) {
+      const idx = inMemoCart.current.items.findIndex(item => item.id === id);
+      if (idx < 0) {
+        const result = {
+          id,
+          count: body.qty,
+          meta: { restaurantId: body.restaurantId }
+        };
+        inMemoCart.current.items = [
+          ...inMemoCart.current.items,
+          result
+        ];
+        res.send(result);
+      } else {
+        const result = Object.assign(inMemoCart.current.items[idx], {
+          count: body.qty
+        });
+        res.send(result);
+      }
+      return;
+    }
+
+    res.sendStatus(404);
   },
 });
 

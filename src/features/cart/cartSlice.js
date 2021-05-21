@@ -15,13 +15,17 @@ export const updateCartWithItemAsyncThunk = createAsyncThunk(
   async (data, { rejectWithValue, dispatch }) => {
     const { cartId, restaurantId, itemId, qty, item } = data;
     void item;
+    if (!restaurantId || !cartId || !itemId) {
+      return;
+    }
     return putUpdateCartWithItem(cartId, restaurantId, itemId, qty);
   });
 
 const initialState = {
   id: null,
   status: null,
-  items: []
+  items: [],
+  hash: ''
 };
 
 export const accessCart = (propName) => ({ [ ns ]: state }) => propName ? (state?.[ propName ]) : state;
@@ -52,10 +56,14 @@ export const cartSlice = createSlice({
       const { itemId, item, restaurantId, qty } = meta.arg;
       const idx = state.items.findIndex(i => i.id === itemId);
       if (idx >= 0) {
-        Object.assign(state.items[ idx ], {
-          count: state.items[ idx ].count + qty,
-          oldCount: state.items[ idx ].count
-        });
+        state.items = [
+          ...state.items.slice(0, idx),
+          Object.assign({}, state.items[ idx ], {
+            count: state.items[ idx ].count + qty,
+            oldCount: state.items[ idx ].count
+          }),
+          ...state.items.slice(idx + 1)
+        ]; // state.items.splice(idx, 1);
       } else {
         state.items = [
           ...state.items,
@@ -66,6 +74,8 @@ export const cartSlice = createSlice({
           })
         ];
       }
+      state.hash = calculateHash(state.items);
+
     })
     .addCase(updateCartWithItemAsyncThunk.fulfilled, (state, { payload, meta }) => {
       console.log(payload, meta);
@@ -75,7 +85,16 @@ export const cartSlice = createSlice({
       if (idx < 0) {
         return;
       }
-      Object.assign(state.items[ idx ], { oldCount: undefined });
+
+      state.items = [
+        ...state.items.slice(0, idx),
+        Object.assign({}, state.items[ idx ], {
+          oldCount: undefined
+        }),
+        ...state.items.slice(idx + 1)
+      ];
+      state.hash = calculateHash(state.items);
+
     })
     .addCase(updateCartWithItemAsyncThunk.rejected, (state, { payload, meta, error }) => {
       console.log(payload, meta);
@@ -85,16 +104,27 @@ export const cartSlice = createSlice({
       if (idx < 0) {
         return;
       }
-      if (state.items[ idx ].oldCount === 0) {
-        state.items = [ ...state.items.slice(0, idx), ...state.items.slice(idx + 1) ]; // state.items.splice(idx, 1);
-      } else {
-        Object.assign(state.items[ idx ], {
-          oldCount: undefined,
-          count: state.items[ idx ].oldCount
-        });
-      }
+
+      state.items = [
+        ...state.items.slice(0, idx),
+        ...((state.items[ idx ].oldCount === 0) ? [] : [
+          Object.assign({}, state.items[ idx ], {
+            oldCount: undefined,
+            count: state.items[ idx ].oldCount
+          })
+        ]),
+        ...state.items.slice(idx + 1)
+      ];
+      state.hash = calculateHash(state.items);
+
+
+
     })
 });
+
+function calculateHash(arr) {
+  return arr.map(i => [ i.id, i.count, i.oldCount ?? '' ].join('|')).join(';');
+}
 
 export const { resetCart } = cartSlice.actions;
 
