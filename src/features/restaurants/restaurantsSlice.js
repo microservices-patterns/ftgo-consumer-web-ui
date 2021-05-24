@@ -66,9 +66,9 @@ export const { resetSelectedRestaurant, keepSelectedRestaurant } = restaurantsSl
 
 export const accessSelectedRestaurantId = () => ({ [ ns ]: state }) => state.selectedRestaurantId;
 export const accessRestaurantMenuState = (restaurantId) => ({ [ ns ]: state }) => state.menuState[ restaurantId ];
-export const accessMenuForRestaurant = (restaurantId) => ({ [ ns ]: state }) => state.menus[ restaurantId ] ?
+export const accessMenuForRestaurant = (restaurantId, fallback) => ({ [ ns ]: state }) => (state.menus[ restaurantId ] ?
   selectAll(state.menus[ restaurantId ]) :
-  undefined;
+  undefined) || fallback;
 
 const namedReducer = {
   [ ns ]: restaurantsSlice.reducer

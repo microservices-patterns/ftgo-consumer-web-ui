@@ -24,8 +24,7 @@ export const updateCartWithItemAsyncThunk = createAsyncThunk(
 const initialState = {
   id: null,
   status: null,
-  items: [],
-  hash: ''
+  items: []
 };
 
 export const accessCart = (propName) => ({ [ ns ]: state }) => propName ? (state?.[ propName ]) : state;
@@ -51,15 +50,13 @@ export const cartSlice = createSlice({
       state.items = [];
     })
     .addCase(updateCartWithItemAsyncThunk.pending, (state, { payload, meta }) => {
-      console.log(payload, meta);
-      debugger;
       const { itemId, item, restaurantId, qty } = meta.arg;
       const idx = state.items.findIndex(i => i.id === itemId);
       if (idx >= 0) {
         state.items = [
           ...state.items.slice(0, idx),
           Object.assign({}, state.items[ idx ], {
-            count: state.items[ idx ].count + qty,
+            count: qty,
             oldCount: state.items[ idx ].count
           }),
           ...state.items.slice(idx + 1)
@@ -68,37 +65,35 @@ export const cartSlice = createSlice({
         state.items = [
           ...state.items,
           Object.assign({}, item, {
+            id: itemId,
             meta: { restaurantId },
             count: qty,
             oldCount: 0
           })
         ];
       }
-      state.hash = calculateHash(state.items);
 
     })
     .addCase(updateCartWithItemAsyncThunk.fulfilled, (state, { payload, meta }) => {
-      console.log(payload, meta);
-      debugger;
       const { itemId } = meta.arg;
       const idx = state.items.findIndex(item => item.id === itemId);
       if (idx < 0) {
         return;
       }
 
+      const oldItem = state.items[ idx ];
+      debugger;
+
       state.items = [
         ...state.items.slice(0, idx),
-        Object.assign({}, state.items[ idx ], {
+        ...(oldItem.count ? [ Object.assign({}, state.items[ idx ], {
           oldCount: undefined
-        }),
+        }) ] : []),
         ...state.items.slice(idx + 1)
       ];
-      state.hash = calculateHash(state.items);
 
     })
     .addCase(updateCartWithItemAsyncThunk.rejected, (state, { payload, meta, error }) => {
-      console.log(payload, meta);
-      debugger;
       const { itemId } = meta.arg;
       const idx = state.items.findIndex(item => item.id === itemId);
       if (idx < 0) {
@@ -115,9 +110,6 @@ export const cartSlice = createSlice({
         ]),
         ...state.items.slice(idx + 1)
       ];
-      state.hash = calculateHash(state.items);
-
-
 
     })
 });
@@ -125,6 +117,8 @@ export const cartSlice = createSlice({
 function calculateHash(arr) {
   return arr.map(i => [ i.id, i.count, i.oldCount ?? '' ].join('|')).join(';');
 }
+
+void calculateHash;
 
 export const { resetCart } = cartSlice.actions;
 

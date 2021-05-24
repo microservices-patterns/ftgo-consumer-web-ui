@@ -1,8 +1,6 @@
 import resource from 'resource-router-middleware';
 
-const initialCart = {
-  name: 'new cart'
-};
+const initialCart = {};
 
 const inMemoCart = {
   current: null
@@ -16,12 +14,10 @@ const cartResource = ({ config, db }) => resource({
 
   /** POST / - Create a new entity */
   create(req, res) {
-    if (!inMemoCart.current) {
-      inMemoCart.current = Object.assign({}, initialCart, {
-        id: String(new Date().getTime()),
-        items: []
-      });
-    }
+    inMemoCart.current = Object.assign({}, initialCart, {
+      id: String(new Date().getTime()),
+      items: []
+    });
 
     res.json(inMemoCart.current);
   },
@@ -29,7 +25,7 @@ const cartResource = ({ config, db }) => resource({
   /** PUT /:id - Update a given entity */
   update({ body, ...req }, res) {
 
-    const id = req.params[facetName];
+    const id = req.params[ facetName ];
     console.log(id, body);
     debugger;
 
@@ -45,14 +41,22 @@ const cartResource = ({ config, db }) => resource({
           ...inMemoCart.current.items,
           result
         ];
-        res.send(result);
+        console.log(JSON.stringify(inMemoCart.current.items, null, 2));
+        return new Promise(rs => setTimeout(() => {
+          res.send(result);
+          rs();
+        }, 2000));
       } else {
-        const result = Object.assign(inMemoCart.current.items[idx], {
+        const result = Object.assign(inMemoCart.current.items[ idx ], {
           count: body.qty
         });
-        res.send(result);
+        //        res.send(result);
+        console.log(JSON.stringify(inMemoCart.current.items, null, 2));
+        return new Promise(rs => setTimeout(() => {
+          res.send(result);
+          rs();
+        }, 2000));
       }
-      return;
     }
 
     res.sendStatus(404);

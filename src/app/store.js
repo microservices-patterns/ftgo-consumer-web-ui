@@ -14,5 +14,6 @@ const connectedReducer = makeConnectedReducer(history);
 
 export const store = configureStore({
   reducer: connectedReducer,
+  devTools: true,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(routerMiddleware(history))
 });

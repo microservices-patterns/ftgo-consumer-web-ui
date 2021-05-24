@@ -42,9 +42,9 @@ export const PaginatedTable = ({
           /></div>
           <div className={ paginationOnTop ? 'order-0' : 'order-1' }>
             <div className="d-flex flex-row justify-content-between align-content-start flex-wrap">
-              <SizePerPageDropdownStandalone
+              <div className="d-inline-block mb-3"><SizePerPageDropdownStandalone
                 { ...paginationProps }
-              />
+              /></div>
 
               <PaginationListStandalone
                 { ...paginationProps }

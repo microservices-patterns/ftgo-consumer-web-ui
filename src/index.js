@@ -11,6 +11,3 @@ ReactDOM.render(rootAppNode,
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-export { LessLargeTextDiv } from './ui/elements/textElements';
-export { LargeTextDiv } from './ui/elements/textElements';
-export { SelectedRestaurantRow } from './ui/components/SelectedRestaurantRow';
