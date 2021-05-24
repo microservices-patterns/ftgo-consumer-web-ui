@@ -19,7 +19,10 @@ export const RestaurantPage = ({ match }) => {
   const selectedRestaurantId = useSelector(accessSelectedRestaurantId());
   const cartItems = useSelector(accessCartItems());
 
-  const cartSubtotal = useMemo(() => cartItems.reduce((sum, { price, count }) => (sum + Number(price) * count ), 0), [ cartItems ]);
+  const cartSubtotal = useMemo(() => cartItems.reduce((sum, {
+    price,
+    count
+  }) => (sum + Number(price) * count), 0), [ cartItems ]);
 
   useEffect(() => {
     if (selectedRestaurantId && urlRestaurantId) {
@@ -33,12 +36,12 @@ export const RestaurantPage = ({ match }) => {
   return <div style={ { marginTop: '-1rem' } }>
     <SelectedAddressRow />
     <SelectedRestaurantRow />
-    <Container className="d-flex">
-      <Col sm={ 6 } className="py-2">
+    <Container className="d-flex flex-column flex-lg-row">
+      <Col xs={ 12 } lg={ 7 } className="py-2">
         <h2>Menu Items:</h2>
         <MenuItems restaurantId={ selectedRestaurantId } />
       </Col>
-      <Col sm={ 6 } className="py-2">
+      <Col xs={ 12 } lg={ 5 } className="py-2">
         <h2>Your Tray: <div className="d-inline-block float-right">{ `$${ cartSubtotal.toFixed(2) }` }</div></h2>
         <YourTrayItems />
         <div className="text-right">

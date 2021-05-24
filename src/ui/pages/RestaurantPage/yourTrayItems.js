@@ -16,7 +16,6 @@ export function YourTrayItems() {
 
   const actionColumnFormatter = useCallback((cellContent, row, rowIdx, cartId) => {
     const disabled = !cartId || typeof row.oldCount !== 'undefined';
-    console.log('yourTrayItems - actionColumnFormatter', { cartId });
     return <ButtonGroup size="sm">
       <Button color={ 'info' } size={ 'sm' } disabled={ disabled || (row.count === 0) } onClick={ handleAddToCart(row.id, undefined, row, -1) }><IconMinus /></Button>
       <Button color="link" disabled className={ disabled ? 'text-muted' : '' }> { row.count } </Button>
@@ -32,14 +31,20 @@ export function YourTrayItems() {
       dataField: 'name',
       text: 'Food Item',
       sort: true
-    }, {
-      dataField: 'count',
-      text: 'Qty'
     },
     {
       dataField: 'actions',
       isDummyField: true,
-      text: 'Action',
+      text: 'Qty',
+      sort: true,
+      sortFunc: (a, b, order, dataField, rowA, rowB) => {
+        if (order === 'asc') {
+          return rowA.count - rowB.count;
+        } else {
+          return -(rowA.count - rowB.count);
+        }
+      },
+      classes: 'text-right',
       formatter: actionColumnFormatter,
       formatExtraData: cartId
     }
@@ -68,7 +73,7 @@ export function YourTrayItems() {
       custom: true,
       sizePerPage: 5,
       sizePerPageList: [ 5, 10, 25, 30, 50 ],
-      hidePageListOnlyOnePage: true
+      hidePageListOnlyOnePage: true,
     } }
   />;
 }

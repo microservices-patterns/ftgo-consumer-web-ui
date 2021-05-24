@@ -2,7 +2,6 @@ import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/too
 import { safelyExecuteAsync } from '../../shared/promises';
 import { navigateToPickRestaurants } from '../actions/navigation';
 import { getRestaurantById, postAddressObtainRestaurants } from '../actions/api';
-import { resetCart } from '../cart/cartSlice';
 
 
 const restaurantsAdapter = createEntityAdapter({
@@ -41,7 +40,6 @@ export const retrieveRestaurantsForAddress = createAsyncThunk(
       return rejectWithValue(err);
     }
 
-    dispatch(resetCart());
     dispatch(keepAddressAndTime({ address, time, now }));
     dispatch(navigateToPickRestaurants());
 
@@ -94,13 +92,11 @@ export const addressSlice = createSlice({
       state.error = action.error;
     }).addCase(
       retrieveRestaurantByIdAsyncThunk.pending, state => {
-        debugger;
         state.status = 'loading';
       }
     ).addCase(
       retrieveRestaurantByIdAsyncThunk.fulfilled, (state, { payload }) => {
         state.status = 'idle';
-        debugger;
         if (!payload) {
           return;
         }
@@ -108,7 +104,6 @@ export const addressSlice = createSlice({
       }
     ).addCase(
       retrieveRestaurantByIdAsyncThunk.rejected, (state, action) => {
-        debugger;
         state.status = 'error';
         state.error = action.error;
       }

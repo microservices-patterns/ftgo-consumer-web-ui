@@ -79,9 +79,10 @@ export function MenuItems({ restaurantId }) {
     }, {
       dataField: 'actions',
       isDummyField: true,
-      text: 'Action',
+      text: 'Add To Cart',
       formatter: actionColumnFormatter,
-      formatExtraData: cartId
+      formatExtraData: cartId,
+      classes: 'text-right'
     }
   ]), [ actionColumnFormatter, cartId ]);
 

@@ -82,7 +82,6 @@ export const cartSlice = createSlice({
       }
 
       const oldItem = state.items[ idx ];
-      debugger;
 
       state.items = [
         ...state.items.slice(0, idx),
@@ -113,12 +112,6 @@ export const cartSlice = createSlice({
 
     })
 });
-
-function calculateHash(arr) {
-  return arr.map(i => [ i.id, i.count, i.oldCount ?? '' ].join('|')).join(';');
-}
-
-void calculateHash;
 
 export const { resetCart } = cartSlice.actions;
 

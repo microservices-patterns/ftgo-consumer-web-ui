@@ -13,6 +13,7 @@ import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { keepSelectedRestaurant } from '../../../features/restaurants/restaurantsSlice';
 import { SelectedAddressRow } from '../../components/SelectedAddressRow';
 import { PaginatedTable } from '../../elements/paginatedTable';
+import { resetCart } from '../../../features/cart/cartSlice';
 
 export const RestaurantListPage = () => {
 
@@ -53,6 +54,7 @@ export const RestaurantListPage = () => {
 
   const handleRowSelect = useCallback((entry) => {
     dispatch(keepSelectedRestaurant(entry));
+    dispatch(resetCart());
     entry?.id && dispatch(navigateToEditMenu(entry.id));
   }, [ dispatch ]);
 
