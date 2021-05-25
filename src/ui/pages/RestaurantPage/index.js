@@ -3,8 +3,8 @@ import { Button, Col, Container } from 'reactstrap';
 import { SelectedRestaurantRow } from '../../components/SelectedRestaurantRow';
 import { useDispatch, useSelector } from 'react-redux';
 import { accessSelectedRestaurantId, resetSelectedRestaurant } from '../../../features/restaurants/restaurantsSlice';
-import { useEffect, useMemo } from 'react';
-import { navigateToEditDeliveryAddress } from '../../../features/actions/navigation';
+import { useCallback, useEffect, useMemo } from 'react';
+import { navigateToCheckout, navigateToEditDeliveryAddress } from '../../../features/actions/navigation';
 import { YourTrayItems } from './yourTrayItems';
 import { MenuItems } from './menuItems';
 import { IconChevronRight } from '../../elements/icons';
@@ -24,13 +24,17 @@ export const RestaurantPage = ({ match }) => {
     count
   }) => (sum + Number(price) * count), 0), [ cartItems ]);
 
+
+  const handleToCheckout = useCallback(() => {
+    dispatch(navigateToCheckout());
+  }, [ dispatch ]);
+
   useEffect(() => {
     if (selectedRestaurantId && urlRestaurantId) {
       return;
     }
     dispatch(resetSelectedRestaurant());
     dispatch(navigateToEditDeliveryAddress());
-
   }, [ dispatch, selectedRestaurantId, urlRestaurantId ]);
 
   return <div style={ { marginTop: '-1rem' } }>
@@ -45,7 +49,7 @@ export const RestaurantPage = ({ match }) => {
         <h2>Your Tray: <div className="d-inline-block float-right">{ `$${ cartSubtotal.toFixed(2) }` }</div></h2>
         <YourTrayItems />
         <div className="text-right">
-          <Button color="primary" disabled={ !cartItems.length }>Checkout <IconChevronRight /></Button>
+          <Button color="primary" disabled={ !cartItems.length } onClick={ cartItems.length ? handleToCheckout : null }>Checkout <IconChevronRight /></Button>
         </div>
       </Col>
     </Container>

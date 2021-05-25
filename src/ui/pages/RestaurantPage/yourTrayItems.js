@@ -14,6 +14,7 @@ export function YourTrayItems() {
   const cartItemsMap = useMemo(() => createMap(cartItems, i => i.id), [ cartItems ]);
   const handleAddToCart = useUpdateCartHandler(cartId, cartItemsMap, undefined);
 
+
   const actionColumnFormatter = useCallback((cellContent, row, rowIdx, cartId) => {
     const disabled = !cartId || typeof row.oldCount !== 'undefined';
     return <ButtonGroup size="sm">

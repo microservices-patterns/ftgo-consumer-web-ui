@@ -35,7 +35,6 @@ function prepareRoutesForFetch(routes) {
       }
 
       return response.json();
-
     }
     ];
   }));
