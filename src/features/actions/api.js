@@ -25,6 +25,7 @@ function prepareRoutesForFetch(routes) {
       const [ fetchErr, response ] = await safelyExecuteAsync(fetch(typeof url === 'function' ? url(...args) : url, {
         method,
         ...(init ? { body: JSON.stringify(init(...args)) } : {}),
+        mode: 'no-cors', // no-cors, *cors, same-origin
         headers: {
           'Content-Type': 'application/json'
         },

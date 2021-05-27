@@ -1,14 +1,14 @@
 version: '3'
 services:
-  web:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        REACT_APP_BACKEND_API_URL: ${FTGO_BACKEND_API_URL}
+        REACT_APP_BACKEND_API_URL: ${FTGO_BACKEND_HOST:-localhost}:8080
     ports:
       - "5000:5000"
-  server:
+  backend:
     build: server/
     ports:
       - "8080:8080"

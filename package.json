@@ -39,12 +39,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:slim": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "$(npm bin)/jest --env=jest-environment-jsdom-sixteen --config=./src/jest.config.js --watchAll=false --bail --runInBand --reporters=default --reporters=jest-junit --collectCoverage=true --coverageDirectory=$JEST_COVERAGE_OUTPUT_DIR --unhandled-rejections=strict --verbose",
     "test:dev": "source ./ensure-variables-and-paths.sh && $(npm bin)/jest --env=jest-environment-jsdom-sixteen --config=./src/jest.config.js --watchAll=true --reporters=default --reporters=jest-junit --unhandled-rejections=strict --verbose",
     "serve": "serve -s build -C -l 5000 --debug",
     "eject": "#react-scripts eject"
   },
-  "_proxy": "http://localhost:8080",
+  "proxy": "http://localhost:8080",
   "eslintConfig": {
     "extends": "react-app"
   },
