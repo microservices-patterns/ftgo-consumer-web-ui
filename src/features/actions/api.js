@@ -1,6 +1,6 @@
 import { safelyExecuteAsync } from '../../shared/promises';
 
-const API_URL = `${process.env.REACT_APP_BACKEND_API_URL}/api`;
+const API_URL = (`${process.env.REACT_APP_BACKEND_API_URL}/api`).replace(/\/\/api$/i, '/api');
 
 const apiRoutes = prepareRoutesForFetch({
   postAddressObtainRestaurants: [
