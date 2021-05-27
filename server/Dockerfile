@@ -8,7 +8,8 @@ RUN apk add --update nodejs bash git
 
 # Install app dependencies
 COPY package.json /www/package.json
-RUN cd /www; npm install
+RUN cd /www
+RUN npm install
 
 # Copy app source
 COPY . /www

@@ -7,5 +7,6 @@ RUN npm config set unsafe-perm true && npm install -g serve
 RUN npm install
 ADD src ./src
 ADD public ./public
+#CMD npm run start
 RUN npm run build
 CMD npm run serve

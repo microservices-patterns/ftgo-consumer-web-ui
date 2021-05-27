@@ -1,11 +1,19 @@
 version: '3'
 services:
+  server:
+    container_name: ftgo-fake-backend
+    build: server/
+    image: alpine:3.4
+    ports:
+      - "8080:8080"
   web:
     container_name: ftgo-frontend-web-app
     build: .
     image: node:12.22.1-alpine
     ports:
       - "5000:5000"
+      - "3000:3000"
     environment:
-      BACKEND_API_URL: ${FTGO_BACKEND_API_URL}
+      REACT_APP_BACKEND_API_URL: ${FTGO_BACKEND_API_URL}
+
 

@@ -16,7 +16,8 @@ app.use(morgan('dev'));
 
 // 3rd party middleware
 app.use(cors({
-	exposedHeaders: config.corsHeaders
+	exposedHeaders: config.corsHeaders,
+	origin: false
 }));
 
 app.use(bodyParser.json({

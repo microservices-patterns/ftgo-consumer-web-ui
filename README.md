@@ -55,6 +55,9 @@ When the `serve` command is run, the following output will inform you of how to 
 
 For a number of reasons if you need the app running in Docker, run the shell script:
 
-### `./start-http-server.sh`
+### `FTGO_BACKEND_API_URL=<BACKEND_ADDRESS>:8080 ./start-http-server.sh`
 
 Presently it simply runs `docker-compose up -d --build`.
+
+**(!) Note:**
+The application is available on the 3000 port now.
