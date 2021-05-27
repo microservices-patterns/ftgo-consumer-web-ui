@@ -55,9 +55,43 @@ When the `serve` command is run, the following output will inform you of how to 
 
 For a number of reasons if you need the app running in Docker, run the shell script:
 
-### `FTGO_BACKEND_API_URL=<BACKEND_ADDRESS>:8080 ./start-http-server.sh`
+### `FTGO_BACKEND_API_URL=<BACKEND_ADDRESS> ./start-http-server.sh`
 
-Presently it simply runs `docker-compose up -d --build`.
+(Presently it simply runs `docker-compose up -d --build`).
 
-**(!) Note:**
-The application is available on the 3000 port now.
+## Temporary Usage Conventions
+
+While the backend server is only an express-based fake one, several important bits of backend logic are emulated over the input parameters.
+
+### Landing page
+
+Specify time ending in...
+
+#### odd numbers 
+
+... to receive form validation error
+
+#### ending in `0`
+
+... to receive a list of 0 restaurants
+
+#### ending in `8`
+
+... to receive a full list of available restaurants
+
+
+### Pick restaurants page
+
+There is a specific restaurant in the full list titled...
+
+#### `'All-Ooma - All items'` 
+
+... to receive a full menu (of all available items)
+
+#### `'Imitates a restaurant with zero menu items'`
+
+... to receive 0 items in the menu
+
+
+
+

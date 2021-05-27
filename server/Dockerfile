@@ -1,17 +1,13 @@
 FROM node:12.22.1-alpine
 
 # Install app dependencies
-RUN mkdir /www
-COPY package.json /www
-COPY package-lock.json /www
-RUN cd /www
-RUN npm i
+COPY package.json .
+COPY package-lock.json .
+RUN npm ci
 
 # Copy app source
 #COPY . /www
-ADD src /www/src
-WORKDIR /www
+ADD src ./src
 ENV PORT 8080
 EXPOSE  8080
-# start command as per package.json
-CMD ["npm", "start"]
+CMD npm run start
