@@ -1,8 +1,7 @@
 version: 2
 jobs:
   build:
-    docker:
-      - image: circleci/node:12.18.4-buster-browsers
+    machine: true
     working_directory: ~/ftgo-consumer-web-ui
     steps:
       - checkout
@@ -13,7 +12,7 @@ jobs:
             ./build-and-test-all.sh
       - run:
           command: |
-            export FTGO_BACKEND_API_URL=http://localhost:8080 
+            export FTGO_BACKEND_API_URL=http://localhost:8080
             ./test-docker-image.sh
       - store_test_results:
           path: ~/ftgo-consumer-web-ui/reports
