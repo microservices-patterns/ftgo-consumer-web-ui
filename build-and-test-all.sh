@@ -19,9 +19,8 @@ echo "20. Installing dependencies"
 
 echo "running npm install in $(pwd)"
 rm -rf node_modules
-rm -f package-lock.json
-npm install --no-audit # --loglevel verbose
-npm audit fix
+#rm -f package-lock.json
+npm ci # --loglevel verbose
 
 
 echo ""

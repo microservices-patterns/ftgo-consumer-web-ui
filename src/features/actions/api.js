@@ -1,31 +1,34 @@
 import { safelyExecuteAsync } from '../../shared/promises';
+import { ensureEnvVariable } from '../../shared/env';
 
-const API_URL = (`${process.env.REACT_APP_BACKEND_API_URL}/api`).replace(/\/\/api$/i, '/api');
+const API_URL = ensureEnvVariable('REACT_APP_BACKEND_API_URL', window.location.origin);
+
+const urlResolver = obtainFQDNUrl(API_URL, window.location);
 
 const apiRoutes = prepareRoutesForFetch({
   postAddressObtainRestaurants: [
-    `POST ${ API_URL }/address`,
+    `POST /address`,
     (address, time, origin) => ({ address, time, origin })
   ],
-  getRestaurantById: restaurantId => `${ API_URL }/restaurants/${ restaurantId }`,
-  postCreateNewCart: `POST ${ API_URL }/cart`,
+  getRestaurantById: restaurantId => `/restaurants/${ restaurantId }`,
+  postCreateNewCart: `POST /cart`,
   putUpdateCartWithItem: [
-    (cartId, restaurantId, itemId, qty) => `PUT ${ API_URL }/cart/${ cartId }`,
+    (cartId, restaurantId, itemId, qty) => `PUT /cart/${ cartId }`,
     (cartId, restaurantId, itemId, qty) => ({ cartId, restaurantId, itemId, qty })
   ]
-});
+}, urlResolver);
 
 export const { postAddressObtainRestaurants, getRestaurantById, putUpdateCartWithItem, postCreateNewCart } = apiRoutes;
 
-function prepareRoutesForFetch(routes) {
+function prepareRoutesForFetch(routes, urlResolver) {
   return Object.fromEntries(Array.from(Object.entries(routes), ([ k, v ]) => {
     const [ resource, init ] = Array.isArray(v) ? v : [ v ];
     return [ k, async (...args) => {
-      const [ method, url ] = parseResource(resource, args);
+      const [ method, url ] = parseResource(resource, args, urlResolver);
       const [ fetchErr, response ] = await safelyExecuteAsync(fetch(typeof url === 'function' ? url(...args) : url, {
         method,
         ...(init ? { body: JSON.stringify(init(...args)) } : {}),
-        mode: 'no-cors', // no-cors, *cors, same-origin
+        mode: 'cors', // no-cors, *cors, same-origin
         headers: {
           'Content-Type': 'application/json'
         },
@@ -41,7 +44,31 @@ function prepareRoutesForFetch(routes) {
   }));
 }
 
-function parseResource(input, args) {
+function parseResource(input, args, urlResolver) {
   const parts = (((typeof input === 'function') ? input(...args) : input).split(/\s+/));
-  return (parts.length === 1) ? [ 'GET', parts[ 0 ] ] : [ parts[ 0 ].toUpperCase(), parts[ 1 ] ];
+  return (parts.length === 1) ? [ 'GET', urlResolver(parts[ 0 ]) ] : [ parts[ 0 ].toUpperCase(), urlResolver(parts[ 1 ]) ];
+}
+
+function obtainFQDNUrl(baseUrl, location) {
+  const resolvedLocation = resolveBaseUrl(baseUrl, location);
+  resolvedLocation.pathname = 'api';
+  const resolvedAPILocation = resolvedLocation.toString();
+
+  return pathPart =>
+    [
+      resolvedAPILocation,
+      pathPart
+    ].join('/').replace(`${ resolvedAPILocation }//`, `${ resolvedAPILocation }/`);
+}
+
+function resolveBaseUrl(baseUrl, location) {
+  try {
+    const result = new window.URL(baseUrl);
+    if (result.origin == null) {
+      return new URL(`${ location.protocol }${ baseUrl }`);
+    }
+    return result;
+  } catch (ex) {
+    return new URL(`${ location.protocol }${ baseUrl }`);
+  }
 }

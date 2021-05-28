@@ -1,21 +1,28 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { accessCart, accessCartItems, accessCartStatus } from '../../../features/cart/cartSlice';
-import { navigateToEditMenu } from '../../../features/actions/navigation';
+import { navigateToEditMenu, navigateToPickRestaurants } from '../../../features/actions/navigation';
 import { Container } from 'reactstrap';
+import { accessSelectedRestaurantId } from '../../../features/restaurants/restaurantsSlice';
 
 const CheckoutPage = () => {
   const dispatch = useDispatch();
   const cartStatus = useSelector(accessCartStatus());
   const cartItems = useSelector(accessCartItems());
   const cartId = useSelector(accessCart('id'));
+  const selectedRestaurantId = useSelector(accessSelectedRestaurantId());
+
   void cartItems;
 
   useEffect(() => {
     if (!cartId || (cartStatus !== 'ready')) {
       return null;
     }
-    dispatch(navigateToEditMenu());
+    if (selectedRestaurantId) {
+      dispatch(navigateToEditMenu(selectedRestaurantId));
+    } else {
+      dispatch(navigateToPickRestaurants());
+    }
   }, [ cartId, cartStatus, dispatch ]);
 
   if (!cartId || (cartStatus !== 'ready')) {

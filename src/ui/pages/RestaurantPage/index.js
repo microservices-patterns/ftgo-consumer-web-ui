@@ -30,7 +30,7 @@ export const RestaurantPage = ({ match }) => {
   }, [ dispatch ]);
 
   useEffect(() => {
-    if (selectedRestaurantId && urlRestaurantId) {
+    if (selectedRestaurantId && urlRestaurantId && (selectedRestaurantId === urlRestaurantId)) {
       return;
     }
     dispatch(resetSelectedRestaurant());
