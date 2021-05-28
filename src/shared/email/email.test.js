@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-expressions */
-import { expect } from 'chai';
 import { destructureEmail, DEFAULT_LABEL_PREFIX, getRandomizedEmailTemplate, DEFAULT_RANDOM_PLACEHOLDER, getRandomEmail } from './index';
 
 describe('A set of utilities to dissect email addresses', () => {
@@ -11,14 +9,14 @@ describe('A set of utilities to dissect email addresses', () => {
       [ 'a+b@a.com', [ 'a', 'b', 'a.com' ]],
     ].filter(Boolean).forEach(([ input, [ expUserName, expLabel, expDomain ]]) => it(`can destructure '${ input }'`, () => {
       const { userName, label, domain } = destructureEmail(input);
-      expect(userName).to.equal(expUserName);
-      expect(label).to.equal(expLabel);
-      expect(domain).to.equal(expDomain);
+      expect(userName).toEqual(expUserName);
+      expect(label).toEqual(expLabel);
+      expect(domain).toEqual(expDomain);
     }));
 
     it('throws for multilabel emails', () => {
-      expect(() => destructureEmail('a++b@c.com')).to.throw();
-      expect(() => destructureEmail('a+a+b@c.com')).to.throw();
+      expect(() => destructureEmail('a++b@c.com')).toThrow();
+      expect(() => destructureEmail('a+a+b@c.com')).toThrow();
     });
 
   });
@@ -31,7 +29,7 @@ describe('A set of utilities to dissect email addresses', () => {
       [ 'a+a@a.com', '_b_', `a+a_b_@a.com` ],
     ].filter(Boolean).forEach(([ input, randomPlaceholder, expectedResult ]) => it(`can provide template for random email for '${ input }'`, () => {
       const result = getRandomizedEmailTemplate(input, randomPlaceholder);
-      expect(result).to.equal(expectedResult);
+      expect(result).toEqual(expectedResult);
     }));
   });
 
@@ -43,7 +41,7 @@ describe('A set of utilities to dissect email addresses', () => {
       [ 'a+a@a.com', () => 'random', `a+arandom@a.com` ],
     ].filter(Boolean).forEach(([ input, randomPartGetter, expectedResult ]) => it(`can create unique emails by supplying random part generator, tested on '${ input }'`, () => {
       const result = getRandomEmail(input, randomPartGetter);
-      expect(result).to.equal(expectedResult);
+      expect(result).toEqual(expectedResult);
     }));
   });
 
