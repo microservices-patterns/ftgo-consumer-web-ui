@@ -19,8 +19,12 @@ jobs:
             ./build-and-test-all.sh
       - run:
           command: |
-            export FTGO_BACKEND_API_URL=http://localhost:8080
+            export FTGO_BACKEND_API_URL=http://localhost:8080 |
             ./test-docker-image.sh
+      - run:
+          command: |
+            export TEST_UI_URL=http://localhost:5000 |
+            npm run test-ui
       - store_test_results:
           path: ~/ftgo-consumer-web-ui/reports
       - store_artifacts:

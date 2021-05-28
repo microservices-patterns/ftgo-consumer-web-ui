@@ -6,10 +6,13 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "faker": "^5.5.3",
     "jest-environment-jsdom-sixteen": "^1.0.3",
+    "jest-extended": "^0.11.5",
     "jest-fetch-mock": "^3.0.3",
     "jest-junit": "^12.0.0",
-    "node-sass": "^5.0.0"
+    "node-sass": "^5.0.0",
+    "puppeteer": "^9.1.1"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.1",
@@ -42,6 +45,8 @@
     "build:slim": "GENERATE_SOURCEMAP=false react-scripts build --expose-gc",
     "test": "$(npm bin)/jest --env=jest-environment-jsdom-sixteen --config=./src/jest.config.js --watchAll=false --bail --runInBand --reporters=default --reporters=jest-junit --collectCoverage=true --coverageDirectory=$JEST_COVERAGE_OUTPUT_DIR --unhandled-rejections=strict --verbose",
     "test:dev": "source ./ensure-variables-and-paths.sh && $(npm bin)/jest --env=jest-environment-jsdom-sixteen --config=./src/jest.config.js --watchAll=true --reporters=default --reporters=jest-junit --unhandled-rejections=strict --verbose",
+    "test-ui": "$(npm bin)/jest --config tests-ui/jest.config.js --runInBand --reporters=default --unhandled-rejections=strict --verbose",
+    "test-ui:debug": "npx react-app-rewired --inspect-brk test --env=jsdom --config tests-ui/jest.config.js --runInBand",
     "serve": "serve -s build -C -l 5000 --debug",
     "eject": "#react-scripts eject"
   },

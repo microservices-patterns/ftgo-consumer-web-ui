@@ -1,6 +1,6 @@
 .circleci
 build
-ci-artefacts
+ci-artifacts
 node_modules
 reports
 server

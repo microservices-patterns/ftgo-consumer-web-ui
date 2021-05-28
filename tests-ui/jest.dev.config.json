@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "--source": "source: https://jestjs.io/docs/en/troubleshooting#debugging-in-vs-code",
+  "configurations": [
+    {
+      "name": "Debug CRA Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
+      "args": ["test", "--runInBand", "--no-cache", "--env=jsdom"],
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "reporters": [
+        "default",
+        ["<rootDir>/reporters/defaultReporter.js", {"banana": "yes", "pineapple": "no", "json": 6 }]
+      ]
+    }
+  ]
+}
