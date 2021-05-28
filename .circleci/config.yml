@@ -28,6 +28,7 @@ jobs:
             ./test-docker-image.sh
       - run:
           command: |
+            . ./.circleci/load-nvm.sh
             export TEST_UI_URL=http://localhost:5000
             npm run test-ui
       - store_test_results:
