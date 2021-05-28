@@ -23,7 +23,7 @@ const CheckoutPage = () => {
     } else {
       dispatch(navigateToPickRestaurants());
     }
-  }, [ cartId, cartStatus, dispatch ]);
+  }, [ cartId, cartStatus, dispatch, selectedRestaurantId ]);
 
   if (!cartId || (cartStatus !== 'ready')) {
     return null;
