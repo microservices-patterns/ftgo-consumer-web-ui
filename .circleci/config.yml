@@ -14,21 +14,21 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo apt-get update |
+            sudo apt-get update
             sudo apt-get install -y libgbm-dev
       - run:
           command: |
             . ./.circleci/load-nvm.sh
-            export CI_ARTIFACTS_PATH=~/ftgo-consumer-web-ui/ci-artifacts |
-            export JEST_JUNIT_OUTPUT_DIR_PARENT=~/ftgo-consumer-web-ui/reports |
+            export CI_ARTIFACTS_PATH=~/ftgo-consumer-web-ui/ci-artifacts
+            export JEST_JUNIT_OUTPUT_DIR_PARENT=~/ftgo-consumer-web-ui/reports
             ./build-and-test-all.sh
       - run:
           command: |
-            export FTGO_BACKEND_API_URL=http://localhost:8080 |
+            export FTGO_BACKEND_API_URL=http://localhost:8080
             ./test-docker-image.sh
       - run:
           command: |
-            export TEST_UI_URL=http://localhost:5000 |
+            export TEST_UI_URL=http://localhost:5000
             npm run test-ui
       - store_test_results:
           path: ~/ftgo-consumer-web-ui/reports
