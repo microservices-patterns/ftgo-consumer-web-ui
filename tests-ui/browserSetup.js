@@ -27,7 +27,7 @@ export function setUpBrowserAndPage(testLifecycleHooks, context, viewport, setPa
       args: [
         `--window-size=${ width },${ height }`,
         // MICROSERVICES_ASSESSMENT_ENV:  dev - local machine
-        process.env.MICROSERVICES_ASSESSMENT_ENV === 'dev' ? '' : '--no-sandbox',
+        process.env.FTGO_ENV === 'dev' ? '' : '--no-sandbox',
         '--disable-dev-shm-usage',
         '--disable-setuid-sandbox',
         '--disable-features=site-per-process',
@@ -36,7 +36,7 @@ export function setUpBrowserAndPage(testLifecycleHooks, context, viewport, setPa
       ]
     })));
     if (launchErr || !browser) {
-      throw new Error(`[maa-client/spec/browserSetup]: Puppeteer failed to produce a new instance of a browser when 'puppeteer.launch(..)'. Error: ${ launchErr?.message }`);
+      throw new Error(`[ftgo-consumer-web-ui/tests-ui/browserSetup]: Puppeteer failed to produce a new instance of a browser when 'puppeteer.launch(..)'. Error: ${ launchErr?.message }`);
     }
 
 //    browser.on('disconnected', () => {
@@ -54,7 +54,7 @@ export function setUpBrowserAndPage(testLifecycleHooks, context, viewport, setPa
     let pageErr;
     ([ pageErr, page ] = await safelyExecuteAsync(browser.newPage()));
     if (pageErr) {
-      throw new Error(`[maa-client/spec/browserSetup]: Puppeteer failed to create a new page when 'browser.newPage()'. Error: ${ pageErr?.message }`);
+      throw new Error(`[ftgo-consumer-web-ui/tests-ui/browserSetup]: Puppeteer failed to create a new page when 'browser.newPage()'. Error: ${ pageErr?.message }`);
     }
 
     Object.assign(context, { page });

@@ -62,7 +62,7 @@ describe('Interaction with the entire FTGO UI application:', () => {
       console.log(ensureEnvVariable('TEST_UI_URL'), testInfo.email);
     });
 
-    test(`Local storage`, async () => {
+    test(`Navigation to Laning and a screenshot`, async () => {
 
      await navigateToWithinApp(page, '/');
      await waitForTimeout(page, 10000);
