@@ -66,6 +66,8 @@ describe('Interaction with the entire FTGO UI application:', () => {
     test(`Settings`, () => {
       console.log('NODE_ENV: ', process.env.NODE_ENV);
       console.log(ensureEnvVariable('TEST_UI_URL'), testInfo.email);
+
+
     });
 
     test(`Navigation to Landing and a screenshot`, async () => {
@@ -74,6 +76,17 @@ describe('Interaction with the entire FTGO UI application:', () => {
       await waitForTimeout(page, 1000);
       await waitForSelector(page, SEL.PAGE_LANDING);
       await makeScreenshot(page, { label: 'intro' });
+
+      const timeRaw = testInfo.goodAddress.timeRaw;
+
+      testInfo.goodAddress.time = await page.evaluate(
+        d => new Date(d).toLocaleTimeString(navigator.language, {
+          hour: "2-digit",
+          minute: "2-digit"
+        }),
+        timeRaw
+      );
+      console.log('[testInfo.goodAddress.time]', testInfo.goodAddress.time);
 
     });
   });
@@ -87,9 +100,16 @@ describe('Interaction with the entire FTGO UI application:', () => {
     });
 
     test(`[landing page] Correct entry, submission, landing on Restaurants List`, async () => {
+
       await waitForSelector(page, SEL.FORM_PICK_ADDRESS_TIME);
       await waitClickAndType(page, SEL.FORM_FIELD_ADDRESS, testInfo.goodAddress.address);
+      await waitForTimeout(page, 10);
+
       await waitClickAndType(page, SEL.FORM_FIELD_TIME, testInfo.goodAddress.time);
+      await waitForTimeout(page, 10);
+
+      await makeScreenshot(page, { label: 'time_entry' });
+
       await waitForSelectorAndClick(page, SEL.BTN_SUBMIT_FORM_PICK_ADDRESS_TIME);
       await waitForTimeout(page, 10);
       await waitForSelector(page, SEL.BTN_SUBMIT_FORM_PICK_ADDRESS_TIME + '[disabled]');

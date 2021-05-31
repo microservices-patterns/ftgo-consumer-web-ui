@@ -122,8 +122,6 @@ export async function waitClickAndType(page, sel, input, replace) {
     return;
   }
   await page.keyboard.type(Array.from(input), { delay: 20 });
-
-  //await page.type(sel, input);
 }
 
 export function waitForPathnameLocation(page, pattern, opts = { timeout: 30000 }) {

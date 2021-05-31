@@ -8,7 +8,7 @@ export function obtainTestInfo() {
   const result = {
     goodAddress: {
       address: `Testing Address: ${ faker.random.words(2) }`,
-      time: '10:58 PM'
+      timeRaw: new Date(new Date().setHours(0, 8)).toISOString()
     },
     email: getUniqueEmailAddressForTests()
     //phone: faker.phone.phoneNumber(),
