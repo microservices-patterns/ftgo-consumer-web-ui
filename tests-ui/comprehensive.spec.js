@@ -1,12 +1,18 @@
-
 import notifier from './reporters/defaultNotifier';
 import { DEFAULT_TIMEOUT } from './jest.setup';
 import { makeScreenshot, testWrap } from './testWrapper';
 import { obtainTestInfo } from './testInfoProvider';
 import { ensureEnvVariable } from '../src/shared/env';
 import { navigateToWithinApp } from './navigation';
-import { waitForTimeout } from './puppeteerExtensions';
+import {
+  waitClickAndType,
+  waitForSelector,
+  waitForSelectorAndClick,
+  waitForSelectorWithText,
+  waitForTimeout
+} from './puppeteerExtensions';
 import { setUpBrowserAndPage } from './browserSetup';
+import { SEL } from './selectors';
 
 void makeScreenshot;
 
@@ -62,14 +68,49 @@ describe('Interaction with the entire FTGO UI application:', () => {
       console.log(ensureEnvVariable('TEST_UI_URL'), testInfo.email);
     });
 
-    test(`Navigation to Laning and a screenshot`, async () => {
+    test(`Navigation to Landing and a screenshot`, async () => {
 
-     await navigateToWithinApp(page, '/');
-     await waitForTimeout(page, 10000);
-     await makeScreenshot(page, { label: 'intro' })
+      await navigateToWithinApp(page, '/');
+      await waitForTimeout(page, 1000);
+      await waitForSelector(page, SEL.PAGE_LANDING);
+      await makeScreenshot(page, { label: 'intro' });
 
     });
   });
 
+  describe(`10. Landing Page -> Restaurants List -> Menu Page`, () => {
+
+    test(`Navigation to Landing`, async () => {
+      await navigateToWithinApp(page, '/');
+      await waitForTimeout(page, 1000);
+      await waitForSelector(page, SEL.PAGE_LANDING);
+    });
+
+    test(`[landing page] Correct entry, submission, landing on Restaurants List`, async () => {
+      await waitForSelector(page, SEL.FORM_PICK_ADDRESS_TIME);
+      await waitClickAndType(page, SEL.FORM_FIELD_ADDRESS, testInfo.goodAddress.address);
+      await waitClickAndType(page, SEL.FORM_FIELD_TIME, testInfo.goodAddress.time);
+      await waitForSelectorAndClick(page, SEL.BTN_SUBMIT_FORM_PICK_ADDRESS_TIME);
+      await waitForTimeout(page, 10);
+      await waitForSelector(page, SEL.BTN_SUBMIT_FORM_PICK_ADDRESS_TIME + '[disabled]');
+      await waitForSelector(page, SEL.ICON_SPIN);
+
+      await waitForTimeout(page, 300);
+
+      await waitForSelector(page, SEL.PAGE_RESTAURANTS_LIST);
+    });
+
+    test(`[restaurants list page] Navigation, picking correct restaurant, landing of Menu page`, async () => {
+      await waitForSelector(page, SEL.TBL_RESTAURANTS_LIST);
+      await waitForSelector(page, `${ SEL.TBL_RESTAURANTS_LIST } ${ SEL.CTL_PAGINATION_FOR_TABLE }`);
+      await waitForSelectorAndClick(page, `${ SEL.TBL_RESTAURANTS_LIST } ${ SEL.CTL_PAGINATION_FOR_TABLE } .page-item[title="2"]>a.page-link`);
+
+      const el = await waitForSelectorWithText(page, 'td', 'All items');
+      await el.click();
+
+      await waitForSelector(page, SEL.PAGE_RESTAURANT_MENU);
+    });
+
+  });
 
 });

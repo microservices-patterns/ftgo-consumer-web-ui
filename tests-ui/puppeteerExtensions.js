@@ -214,32 +214,38 @@ export async function waitForSelectorWithText(page, sel, text, { timeout = DEFAU
     throw new Error(`waitForSelectorWithText: text is undefined. sel=${ sel }`);
   }
   const ctx = {};
-  try {
-    return (await timedAsyncLoop(
-      (page, sel) =>
-        Promise.all([
-          page.$$eval(sel, els => Array.from(els).map(el => el.textContent)),
-          page.$$(sel)
-        ]),
-      resultTuple => {
-        if (!resultTuple || resultTuple instanceof Error) {
-          return true;
-        }
-        const [ allTextMatches, elArray ] = resultTuple;
-        ctx.allTextMatches = allTextMatches;
-        const idx = allTextMatches.findIndex(textContent => checkMatch(textContent, text));
-        console.log('waitForSelectorWithText: ', idx, allTextMatches);
-        if (idx < 0) {
-          return true;
-        }
-        resultTuple[ 2 ] = elArray[ idx ];
-        return false;
-      },
-      { timeout, safe: true, message: `waitForSelectorWithText: '${ sel }', '${ text }'` }
-    )(page, String(sel), text))[ 2 ];
-  } catch (ex) {
-    throw new Error(`Failed to locate elements by selector: '${ sel }' and text: '${ text }' within ${ timeout }ms. Resulted text matches: ${ ctx.allTextMatches }`);
-  }
+
+  let count = 5;
+  let err = null;
+  let result = null;
+  let tuple = null;
+  do {
+    ([ err, tuple ] = await safelyExecuteAsync(Promise.all([
+      page.$$eval(sel, els => Array.from(els).map(el => el.textContent)),
+      page.$$(sel)
+    ])));
+
+    if (err || !tuple) {
+      err = err || true;
+      await waitForTimeout(page, 1000);
+      continue;
+    }
+
+    {
+      const [ allTextMatches, elArray ] = tuple;
+      ctx.allTextMatches = allTextMatches;
+      const idx = allTextMatches.findIndex(textContent => checkMatch(textContent, text));
+      console.log('waitForSelectorWithText: ', idx, allTextMatches);
+      if (idx < 0) {
+        await waitForTimeout(page, 1000);
+        continue;
+      }
+      return elArray[ idx ];
+    }
+
+  } while (err && (count-- >= 0));
+
+  throw new Error(`Failed to locate elements by selector: '${ sel }' and text: '${ text }' within ${ timeout }ms. Resulted text matches: ${ result }`);
 
 }
 

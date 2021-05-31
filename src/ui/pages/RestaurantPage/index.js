@@ -3,12 +3,13 @@ import { Button, Col, Container } from 'reactstrap';
 import { SelectedRestaurantRow } from '../../components/SelectedRestaurantRow';
 import { useDispatch, useSelector } from 'react-redux';
 import { accessSelectedRestaurantId, resetSelectedRestaurant } from '../../../features/restaurants/restaurantsSlice';
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { navigateToCheckout, navigateToEditDeliveryAddress } from '../../../features/actions/navigation';
 import { YourTrayItems } from './yourTrayItems';
 import { MenuItems } from './menuItems';
 import { IconChevronRight } from '../../elements/icons';
 import { accessCartItems } from '../../../features/cart/cartSlice';
+import { e2eAssist } from '../../../shared/e2e';
 
 
 export const RestaurantPage = ({ match }) => {
@@ -37,7 +38,7 @@ export const RestaurantPage = ({ match }) => {
     dispatch(navigateToEditDeliveryAddress());
   }, [ dispatch, selectedRestaurantId, urlRestaurantId ]);
 
-  return <div style={ { marginTop: '-1rem' } }>
+  return <div style={ { marginTop: '-1rem' } } { ...e2eAssist.PAGE_RESTAURANT_MENU }>
     <SelectedAddressRow />
     <SelectedRestaurantRow />
     <Container className="d-flex flex-column flex-lg-row">

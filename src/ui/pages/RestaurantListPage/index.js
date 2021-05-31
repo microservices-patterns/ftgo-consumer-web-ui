@@ -5,7 +5,7 @@ import {
   retrieveRestaurantsForAddress
 } from '../../../features/address/addressSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { navigateToEditMenu } from '../../../features/actions/navigation';
 import { Col, Container } from 'reactstrap';
 import { LessLargeTextDiv } from '../../elements/textElements';
@@ -14,6 +14,7 @@ import { keepSelectedRestaurant } from '../../../features/restaurants/restaurant
 import { SelectedAddressRow } from '../../components/SelectedAddressRow';
 import { PaginatedTable } from '../../elements/paginatedTable';
 import { resetCart } from '../../../features/cart/cartSlice';
+import { e2eAssist } from '../../../shared/e2e';
 
 export const RestaurantListPage = () => {
 
@@ -67,12 +68,12 @@ export const RestaurantListPage = () => {
     onSelect: handleRowSelect
   }), [ handleRowSelect ]);
 
-  return <div style={ { marginTop: '-1rem' } }>
+  return <div style={ { marginTop: '-1rem' } } { ...e2eAssist.PAGE_RESTAURANTS_LIST }>
     <SelectedAddressRow />
     <Container className="d-flex">
       <Col sm={ 3 }>
         <LessLargeTextDiv size={ 2.5 } className="mb-2">Restaurants:</LessLargeTextDiv>
-        <LessLargeTextDiv size={ 1.25 }>Listing: <strong>{ String(restaurants?.length ?? 0) }</strong></LessLargeTextDiv>
+        <LessLargeTextDiv size={ 1.25 }>Listing: <strong { ...e2eAssist.TEXT_RESTAURANTS_LIST_SIZE } >{ String(restaurants?.length ?? 0) }</strong></LessLargeTextDiv>
       </Col>
       <Col sm={ 9 } className="py-2">
         <PaginatedTable
@@ -86,6 +87,7 @@ export const RestaurantListPage = () => {
           selectRow={ selectRow }
           bordered={ false }
           paginationOnTop
+          { ...e2eAssist.TBL_RESTAURANTS_LIST }
           paginationFactoryOptions={ {
             custom: true,
             sizePerPage: 5,

@@ -11,6 +11,7 @@ import {
 } from '../../../features/address/addressSlice';
 import { If } from '../../elements/conditions';
 import { processFormSubmissionError } from '../../../shared/forms/submissionHandling';
+import { e2eAssist } from '../../../shared/e2e';
 
 export const LandingPageForm = () => {
 
@@ -43,25 +44,25 @@ export const LandingPageForm = () => {
 
   }, [ setError, dispatch, clearErrors ]);
 
-  return <Form className="col-md-6 offset-md-3" method="post" onSubmit={ handleSubmit(onSubmit) }>
+  return <Form className="col-md-6 offset-md-3" method="post" onSubmit={ handleSubmit(onSubmit) }  { ...e2eAssist.FORM_PICK_ADDRESS_TIME } >
 
     <FormGroup>
       . <InputWithIcon type="text" tag={ props => (
       <input type="text" { ...props } required aria-required="true" { ...register('address', {
         required: true
-      }) } />) } invalid={ !!(errors.address) } disabled={ isSubmitting } bsSize="lg" placeholder="Enter Address" icon={
+      }) } { ...e2eAssist.FORM_FIELD_ADDRESS } />) } invalid={ !!(errors.address) } disabled={ isSubmitting } bsSize="lg" placeholder="Enter Address" icon={
       <IconGeo style={ { color: 'rgba(0, 0, 0, .75)' } } />
     } />
       { errors.address &&
-      <FormFeedback>{ errors.address.message || 'Invalid address' }</FormFeedback> }
+      <FormFeedback { ...e2eAssist.FORM_FEEDBACK_ADDRESS }>{ errors.address.message || 'Invalid address' }</FormFeedback> }
     </FormGroup>
 
     <FormGroup>
       <InputWithIcon type="time" tag={ props => (
-        <input type="time" { ...props } required aria-required="true" { ...register('time', { required: true }) } />) } invalid={ !!(errors.time) } disabled={ isSubmitting } bsSize="lg" placeholder="Enter Time" icon={
+        <input type="time" { ...props } required aria-required="true" { ...register('time', { required: true }) } { ...e2eAssist.FORM_FIELD_TIME } />) } invalid={ !!(errors.time) } disabled={ isSubmitting } bsSize="lg" placeholder="Enter Time" icon={
         <IconClock style={ { color: 'rgba(0, 0, 0, .75)' } } /> } />
       { errors.time &&
-      <FormFeedback>{ errors.time.message || 'Invalid time' }</FormFeedback> }
+      <FormFeedback { ...e2eAssist.FORM_FEEDBACK_TIME }>{ errors.time.message || 'Invalid time' }</FormFeedback> }
     </FormGroup>
 
     { errors.form &&
@@ -69,7 +70,7 @@ export const LandingPageForm = () => {
 
     <FormGroup row>
       <Col className="text-right" sm={ { size: 10, offset: 2 } }>
-        <RoundedButton type="submit" disabled={ isSubmitting } className="align-self-end" color="primary" size="lg" active>
+        <RoundedButton type="submit" disabled={ isSubmitting } className="align-self-end" color="primary" size="lg" active { ...e2eAssist.BTN_SUBMIT_FORM_PICK_ADDRESS_TIME }>
           <If condition={ isSubmitting }><IconRefresh /></If><If condition={ !isSubmitting }><IconSearch /></If> Search now
         </RoundedButton>
       </Col>
