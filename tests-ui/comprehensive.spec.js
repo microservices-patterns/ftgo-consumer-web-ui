@@ -79,13 +79,13 @@ describe('Interaction with the entire FTGO UI application:', () => {
 
       const timeRaw = testInfo.goodAddress.timeRaw;
 
-      testInfo.goodAddress.time = await page.evaluate(
+      testInfo.goodAddress.time = (await page.evaluate(
         d => new Date(d).toLocaleTimeString(navigator.language, {
           hour: "2-digit",
           minute: "2-digit"
         }),
         timeRaw
-      );
+      )).replace(' ', '');
       console.log('[testInfo.goodAddress.time]', testInfo.goodAddress.time);
 
     });
