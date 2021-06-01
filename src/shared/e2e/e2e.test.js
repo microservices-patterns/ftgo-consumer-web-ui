@@ -1,5 +1,4 @@
-
-import { e2eAttr, e2eSelector, pickHeadUntilNullish, prepareSelector } from './helpers';
+import { e2eAttr, e2eSelector, pickHeadUntilNullish, prepareSelector, prepareSelectorOpen } from './helpers';
 
 describe(`src/shared/e2e/helpers.js`, () => {
   describe(`pickHeadUntilNullish(arr:Array<string|empty>):Array<string>`, () => {
@@ -28,6 +27,31 @@ describe(`src/shared/e2e/helpers.js`, () => {
       test(`#${ 1 + idx }. ${ msg } `, () => {
         const K = arg => arg;
         expect(prepareSelector(...args)(K)).toEqual(expected);
+      }));
+  });
+
+  describe(`prepareSelectorOpen(...args) => fn => (...args2) => *`, () => {
+    [
+      [ [], [], '', 'No args' ],
+      [ [ 'modal' ], [], 'modal|', 'single arg' ],
+      [ [ 'modal', 'alert' ], [], 'modal|alert|', 'two args' ],
+      [ [ 'modal' ], [ 'alert' ], 'modal|alert|', 'two args' ],
+      [ [ 'modal', 'alert', null ], [], 'modal|alert|', 'three args with null in the end (3-0)' ],
+      [ [ 'modal', 'alert' ], [ null ], 'modal|alert|', 'three args with null in the end (2-1)' ],
+      [ [ 'modal' ], [ 'alert', null ], 'modal|alert|', 'three args with null in the end (1-2)' ],
+      [ [], [ 'modal', 'alert', null ], 'modal|alert|', 'three args with null in the end (0-3)' ],
+      [ [ 'modal', null, 'alert' ], [], 'modal|', 'three args with null in the middle (3-0)' ],
+      [ [ 'modal', null ], [ 'alert' ], 'modal|', 'three args with null in the middle (2-1)' ],
+      [ [ 'modal' ], [ null, 'alert' ], 'modal|', 'three args with null in the middle (1-2)' ],
+      [ [], [ 'modal', null, 'alert' ], 'modal|', 'three args with null in the middle (0-3)' ],
+      [ [ null, 'modal', 'alert' ], [], '', 'three args with null at the start (3-0)' ],
+      [ [ null, 'modal' ], [ 'alert' ], '', 'three args with null at the start (2-1)' ],
+      [ [ null ], [ 'modal', 'alert' ], '', 'three args with null at the start (1-2)' ],
+      [ [], [ null, 'modal', 'alert' ], '', 'three args with null at the start (0-3)' ],
+    ].filter(Boolean).map(([ args, args2, expected, msg ], idx) =>
+      test(`#${ 1 + idx }. ${ msg } `, () => {
+        const K = arg => arg;
+        expect(prepareSelectorOpen(...args)(K)(...args2)).toEqual(expected);
       }));
   });
 

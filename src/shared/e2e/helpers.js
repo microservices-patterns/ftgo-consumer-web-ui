@@ -12,9 +12,9 @@ export function pickHeadUntilNullish(arr) {
 
 /**
  *
- * @param role? {string}
- * @param roleSpecifics? {string}
- * @param personalization? {string}
+ * @param {string} [role]
+ * @param {string} [roleSpecifics]
+ * @param {string} [personalization]
  * @return {function(arg:string): *}
  */
 export function prepareSelector(role, roleSpecifics, personalization) {
