@@ -1,4 +1,4 @@
-import { e2eAttr, e2eSelector, pickHeadUntilNullish, prepareSelector, prepareSelectorOpen } from './helpers';
+import { cssSel, e2eAttr, e2eSelector, pickHeadUntilNullish, prepareSelector, prepareSelectorOpen } from './helpers';
 
 describe(`src/shared/e2e/helpers.js`, () => {
   describe(`pickHeadUntilNullish(arr:Array<string|empty>):Array<string>`, () => {
@@ -82,5 +82,20 @@ describe(`src/shared/e2e/helpers.js`, () => {
         expect(prepareSelector(...args)(e2eSelector)).toEqual(expected);
       }));
 
+  });
+
+  describe(`cssSel(*)`, () => {
+    [
+      [ '*', null, '*', 'Any tag' ],
+      [ '.class1', null, '.class1', 'A class name as a starter' ],
+      [ '.class1', inst => ('*'+inst), '*.class1', 'Concatenating to a string, testing valueOf()' ],
+      [ '.class1', inst => inst.desc('.class2'), '.class1 .class2', 'one descendant' ],
+      [ '.class1', inst => inst.desc('.class2').desc('.class3'), '.class1 .class2 .class3', 'two descendants' ],
+      [ '.class1', inst => inst.attr('disabled'), '.class1[disabled]', 'attribute presence' ],
+      [ '.class1', inst => inst.attr('title', 3), '.class1[title="3"]', 'attribute equality to a given value' ],
+    ].filter(Boolean).map(([ firstArg, tf, expected, msg ], idx) =>
+      test(`#${ 1 + idx }. ${ msg } `, () => {
+        expect(String(tf ? tf(cssSel(firstArg)): cssSel(firstArg))).toEqual(expected);
+      }));
   });
 });

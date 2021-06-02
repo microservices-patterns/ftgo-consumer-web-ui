@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { Button, ButtonGroup } from 'reactstrap';
 import { IconMinus, IconPlus } from '../../elements/icons';
 import { PaginatedTable } from '../../elements/paginatedTable';
+import { e2eAssist } from '../../../shared/e2e';
 
 export function YourTrayItems() {
 
@@ -65,7 +66,7 @@ export function YourTrayItems() {
     hover
     keyField="id"
     data={ cartItems || [] }
-    noDataIndication={ <>Add food to your tray</> }
+    noDataIndication={ <span { ...e2eAssist.INFO_TRAY_IS_EMPTY }>Add food to your tray</span> }
     columns={ columns }
     defaultSorted={ defaultSorted }
     bordered={ false }
@@ -76,5 +77,6 @@ export function YourTrayItems() {
       sizePerPageList: [ 5, 10, 25, 30, 50 ],
       hidePageListOnlyOnePage: true,
     } }
+    { ...e2eAssist.TBL_YOUR_TRAY }
   />;
 }

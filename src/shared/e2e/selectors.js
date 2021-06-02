@@ -1,4 +1,4 @@
-import { prepareSelector } from './helpers';
+import { prepareSelector, prepareSelectorOpen } from './helpers';
 
 export const selectors = fn => applyForEachPair({
   PAGE_LANDING: prepareSelector('page', 'landing'),
@@ -18,8 +18,22 @@ export const selectors = fn => applyForEachPair({
   CTL_SIZE_PER_PAGE_FOR_TABLE: prepareSelector('table nav', 'pagination control', 'size per page'),
   CTL_PAGINATION_FOR_TABLE: prepareSelector('table nav', 'pagination control', 'pagination buttons'),
 
-
   PAGE_RESTAURANT_MENU: prepareSelector('page', 'restaurant menu'),
+  TBL_RESTAURANT_MENU: prepareSelector('table', 'restaurant menu'),
+  TBL_YOUR_TRAY: prepareSelector('table', 'your tray'),
+
+  BTN_TO_CHECKOUT: prepareSelector('button', 'navigation', 'to checkout'),
+  BTN_ADD_TO_CART: prepareSelector('button', 'add to cart'),
+  BTN_ADD_TO_CART_FRESH: prepareSelector('button', 'add to cart', 'no such item in cart'),
+  BTN_ADD_TO_CART_ADDED: prepareSelector('button', 'add to cart', 'already in cart'),
+
+  INFO_MENU_IS_EMPTY: prepareSelector('text', 'menu table is empty'),
+  INFO_TRAY_IS_EMPTY: prepareSelector('text', 'tray table is empty'),
+  INFO_CART_VALUE: prepareSelector('text', 'cart subtotal'),
+  INFO_CART_VALUE_OF: prepareSelectorOpen('text', 'cart subtotal'),
+
+  PAGE_CHECKOUT: prepareSelector('page', 'checkout'),
+
 }, fn);
 
 

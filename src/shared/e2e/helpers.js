@@ -32,7 +32,7 @@ export function prepareSelectorOpen(...args) {
   return fn => (...args2) => {
     const selector = pickHeadUntilNullish([ ...args, ...args2 ]).join('|');
     return fn(selector ? selector + '|' : selector);
-  }
+  };
 }
 
 /**
@@ -54,4 +54,102 @@ export function e2eSelector(sel) {
     return `[data-testid^="${ sel }"]`;
   }
   return '[data-testid=""]';
+}
+
+export const cssSel = val => {
+  return new CssSel(val, null, '');
+};
+
+class CssSel {
+  /**
+   *
+   * @param val
+   * @param {CssSel} [parent]
+   * @param {''|' '|'>'|','|' ~ '} [rel='']
+   * @param {array} [marks]
+   */
+  constructor(val, parent = null, rel = '', marks) {
+    this._args = [ val, parent, rel, marks ];
+    this._marks = marks || (parent ? parent._marks : []) || [];
+  }
+
+  store() {
+    return new CssSel('', this, '', [ ...this._marks, this ]);
+  }
+
+  get(idx) {
+    return this._marks[ idx ];
+  }
+
+  /**
+   * add a selector part for a descendant
+   * @param val
+   * @return {CssSel}
+   */
+  desc(val) {
+    return new CssSel(val, this, ' ');
+  }
+
+  /**
+   * add a selector part for an immediate child
+   * @param val
+   * @return {CssSel}
+   */
+  child(val) {
+    return new CssSel(val, this, '>');
+  }
+
+  /**
+   * add a modifier for a current selector
+   * @param val
+   * @return {CssSel}
+   */
+  mod(val) {
+    return new CssSel(val, this, '');
+  }
+
+  /**
+   *
+   * @param { string } attrName
+   * @param { string|number } [attrValue]
+   * @param { string } [attrCf]
+   * @return {CssSel}
+   */
+  attr(attrName, attrValue, attrCf) {
+    if (attrValue == null) {
+      return new CssSel(`[${ attrName }]`, this, '');
+    }
+    if (attrCf == null) {
+      return new CssSel(`[${ attrName }="${ String(attrValue).replace('"', '\\"') }"]`, this, '');
+    }
+  }
+
+  or(val) {
+    return new CssSel(val, this, ',');
+  };
+
+  second() {
+    return new CssSel(getValue(this), this, ' ~ ');
+  }
+
+  third() {
+    const next = this.second();
+    return new CssSel(getValue(this), next, ' ~ ');
+  }
+
+  toString() {
+    return getValue(this);
+  }
+
+  valueOf() {
+    return getValue(this);
+  }
+}
+
+function getValue(node) {
+  if (!node.effectiveVal) {
+    const [ val, parent, rel ] = node._args;
+    node.effectiveVal = String(parent || '') + rel + val;
+  }
+  return node.effectiveVal;
 }

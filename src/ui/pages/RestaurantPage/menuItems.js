@@ -6,14 +6,39 @@ import {
   accessCartStatus,
   obtainNewCartAsyncThunk
 } from '../../../features/cart/cartSlice';
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { retrieveRestaurantByIdAsyncThunk } from '../../../features/address/addressSlice';
 import { createMap, useUpdateCartHandler } from './hooks';
 import { Button } from 'reactstrap';
 import { IconCartPlus, IconPlus } from '../../elements/icons';
 import { PaginatedTable } from '../../elements/paginatedTable';
 import { usePrevious } from 'react-use';
+import { e2eAssist } from '../../../shared/e2e';
 
+
+/**
+ * @value {
+    'id': '224474',
+    'name': 'Chicken Livers and Portuguese Roll',
+    'position': 1,
+    'price': '250.00',
+    'consumable': '1:1',
+    'cuisine_name': 'Indian',
+    'category_name': 'Appeteasers',
+    'discount': {
+      'type': '',
+      'amount': '0.00'
+    },
+    'tags': []
+  }
+ */
+
+/**
+ *
+ * @param restaurantId
+ * @return {JSX.Element}
+ * @constructor
+ */
 export function MenuItems({ restaurantId }) {
 
   const dispatch = useDispatch();
@@ -46,13 +71,13 @@ export function MenuItems({ restaurantId }) {
   const handleAddToCart = useUpdateCartHandler(cartId, cartItemsMap, restaurantId);
 
   const actionColumnFormatter = useCallback((cellContent, row, rowId, cartId) => {
-    console.log('menuItems - actionColumnFormatter', { cartId });
     if (row.cart) {
       const cartItem = row.cart;
       return <Button color={ 'success' } size={ 'sm' } disabled={ !cartId || (cartItem.oldCount !== undefined) }
-        onClick={ handleAddToCart(row.id, row, cartItem, 1) }><IconPlus /></Button>;
+        onClick={ handleAddToCart(row.id, row, cartItem, 1) }  { ...e2eAssist.BTN_ADD_TO_CART_ADDED }><IconPlus /></Button>;
     }
-    return <Button color={ 'info' } size={ 'sm' } disabled={ !cartId } onClick={ handleAddToCart(row.id, row, null, 1) }><IconCartPlus /></Button>;
+    return <Button color={ 'info' } size={ 'sm' } disabled={ !cartId }
+      onClick={ handleAddToCart(row.id, row, null, 1) } { ...e2eAssist.BTN_ADD_TO_CART_FRESH }><IconCartPlus /></Button>;
   }, [ handleAddToCart ]);
 
   const columns = useMemo(() => ([
@@ -91,23 +116,6 @@ export function MenuItems({ restaurantId }) {
     order: 'desc'
   } ];
 
-  const x = {
-    'id': '224474',
-    'name': 'Chicken Livers and Portuguese Roll',
-    'position': 1,
-    'price': '250.00',
-    'consumable': '1:1',
-    'cuisine_name': 'Indian',
-    'category_name': 'Appeteasers',
-    'discount': {
-      'type': '',
-      'amount': '0.00'
-    },
-    'tags': []
-  };
-
-  void x;
-
   const prevcartId = usePrevious(cartId);
   console.log(prevcartId, ' => ', cartId);
 
@@ -120,7 +128,7 @@ export function MenuItems({ restaurantId }) {
     hover
     keyField="id"
     data={ dataSource }
-    noDataIndication={ <>Menu is temporarily empty</> }
+    noDataIndication={ <span { ...e2eAssist.INFO_MENU_IS_EMPTY }>Menu is temporarily empty</span> }
     columns={ columns }
     defaultSorted={ defaultSorted }
     bordered={ false }
@@ -131,6 +139,7 @@ export function MenuItems({ restaurantId }) {
       sizePerPageList: [ 5, 10, 25, 30, 50 ],
       hidePageListOnlyOnePage: true
     } }
+    { ...e2eAssist.TBL_RESTAURANT_MENU }
   />;
 
 }

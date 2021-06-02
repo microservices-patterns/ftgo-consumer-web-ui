@@ -3,13 +3,14 @@ import { DEFAULT_TIMEOUT } from './jest.setup';
 import { makeScreenshot, testWrap } from './testWrapper';
 import { ensureLocalizedTimeString, obtainTestInfo } from './testInfoProvider';
 import { ensureEnvVariable } from '../src/shared/env';
-import { waitForSelector, waitForSelectorAndClick, waitForSelectorWithText } from './puppeteerExtensions';
+import { waitForTimeout } from './puppeteerExtensions';
 import { setUpBrowserAndPage } from './browserSetup';
-import { SEL } from './selectors';
 import { navigation } from './pages/navigation';
 import { landingPage } from './pages/landing';
 import { restaurantsListPage } from './pages/restaurantsList';
 import { restaurantMenuPage } from './pages/restaurantMenu';
+import { checkoutPage } from './pages/checkout';
+import { summarizePageObject } from './pages/utilities';
 
 void makeScreenshot;
 
@@ -62,6 +63,14 @@ describe('Interaction with the entire FTGO UI application:', () => {
     await ensureLocalizedTimeString(page, testInfo);
   });
 
+  afterAll(async () => {
+    await waitForTimeout(page, 1000);
+  });
+
+  afterAll(() => {
+    summarizePageObject(true);
+  })
+
   describe('00. Ground-zero tests. Browser capabilities', () => {
 
     test(`Settings`, () => {
@@ -102,6 +111,14 @@ describe('Interaction with the entire FTGO UI application:', () => {
       await restaurantsListPage(page).browseTheRestaurantsTableForSpecificEntryAndClickOnIt();
       await restaurantMenuPage(page).expectVisitingSelf();
 
+    });
+
+    test(`[restaurant menu page] Structure check, menu picking, going to checkout`, async () => {
+      await restaurantMenuPage(page).checkStructure();
+      await restaurantMenuPage(page).pickOneItem();
+      await restaurantMenuPage(page).proceedToCheckout();
+
+      await checkoutPage(page).expectVisitingSelf();
     });
 
   });

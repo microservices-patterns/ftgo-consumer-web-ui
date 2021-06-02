@@ -47,10 +47,10 @@ export const RestaurantPage = ({ match }) => {
         <MenuItems restaurantId={ selectedRestaurantId } />
       </Col>
       <Col xs={ 12 } lg={ 5 } className="py-2">
-        <h2>Your Tray: <div className="d-inline-block float-right">{ `$${ cartSubtotal.toFixed(2) }` }</div></h2>
+        <h2>Your Tray: <div className="d-inline-block float-right" { ...e2eAssist.INFO_CART_VALUE_OF(cartSubtotal.toFixed(2)) }>{ `$${ cartSubtotal.toFixed(2) }` }</div></h2>
         <YourTrayItems />
         <div className="text-right">
-          <Button color="primary" disabled={ !cartItems.length } onClick={ cartItems.length ? handleToCheckout : null }>Checkout <IconChevronRight /></Button>
+          <Button color="primary" disabled={ !cartItems.length } onClick={ cartItems.length ? handleToCheckout : null }  { ...e2eAssist.BTN_TO_CHECKOUT }>Checkout <IconChevronRight /></Button>
         </div>
       </Col>
     </Container>

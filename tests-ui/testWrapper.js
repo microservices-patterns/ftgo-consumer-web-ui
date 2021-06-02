@@ -1,4 +1,4 @@
-import { writeFile, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { existsSync, mkdirSync, writeFile, writeFileSync } from 'fs';
 import path from 'path';
 import { promisify } from 'util';
 import { DEFAULT_TIMEOUT } from './jest.setup';
@@ -26,10 +26,15 @@ export const testWrap = (_test, context, fallbackTimeout = 10) => {
 
   let errCounter = 0;
 
-  process.on('unhandledRejection', (reason) => {
+  process.on('unhandledRejection', (reason, promise) => {
     const savePath = `${ artifactsPath }/unhandledRejection_e2e_error_log_${ getTimestampPart(started) }_${ errCounter }.txt`;
-    writeFileSync(savePath, reason);
-    console.log(`unhandledRejection_e2e_error_log_${ errCounter++ }.txt:`, reason.message, reason.stack);
+    const savePathExtra = `${ artifactsPath }/unhandledRejection_e2e_error_log_${ getTimestampPart(started) }_${ errCounter++ }_ext.txt`;
+    try {
+      writeFileSync(savePath, reason);
+      promise.catch((ex) => {
+        writeFileSync(savePathExtra, `Exception: ${ ex }\nStack: ${ ex.stack }`);
+      });
+    } catch (ex) {}
   });
 
   let effectiveTest = _test;
@@ -50,13 +55,14 @@ export const testWrap = (_test, context, fallbackTimeout = 10) => {
       const ts = new Date() - 0;
       return new Promise(async (rs, rj) => {
         timeoutRef = setTimeout(() => {
-          console.log(`Elapsed ${ new Date() - ts } ms`);
+          try {
+            console.log(`Elapsed ${ new Date() - ts } ms`);
+          } catch (ex) {}
           rj(Object.assign(new Error('Test execution timeout, gathering stats'), { name: 'timeout' }));
         }, effectiveTimeout - 10); // just a bit earlier, that's all
         try {
           await afn(...args);
-        }
-        catch (ex) {
+        } catch (ex) {
           clearTimeout(timeoutRef);
           return rj(ex);
         }
@@ -78,8 +84,7 @@ export const testWrap = (_test, context, fallbackTimeout = 10) => {
             await makeScreenshot(page, { testNumber });
             await makeBrowsersConsoleDump(page, { testNumber, ex }, context);
 
-          }
-          catch (ex) {
+          } catch (ex) {
             console.log(`Gathering stats has failed. Reason: ${ ex }`);
           }
 
@@ -100,8 +105,7 @@ async function makeBrowsersConsoleDump(page, { testNumber, ex }, memoObj) {
       .map(entry => entry.join(' ')).join('\r\n');
     void await promisify(writeFile)(consoleDumpPath, consoleDump);
     console.log(`Browser's console dump saved: ${ consoleDumpPath }`);
-  }
-  catch (ex) {
+  } catch (ex) {
     console.log(`Browser's console failed. Reason: ${ ex }`);
   }
 }
@@ -119,8 +123,7 @@ export async function makeHtmlDump(page, { testNumber, name, failedLocation }) {
 
     void await promisify(writeFile)(pageContentDumpPath, effectiveDumpInfo);
     console.log(`Page dump saved: ${ pageContentDumpPath }`);
-  }
-  catch (ex) {
+  } catch (ex) {
     console.log(`Page DOM dump not saved. Reason: ${ ex }`);
   }
 }
@@ -140,11 +143,10 @@ export async function makeScreenshot(page, { testNumber, label, labelIndex, rese
     const screenshotPath = `${ artifactsPath }/art_${ getTimestampPart(started) }_${ testItemLabel }_shot.png`;
     void await page.screenshot({
       path: screenshotPath,
-      ...(clip ? {  } : { fullPage: true })
+      ...(clip ? {} : { fullPage: true })
     });
     console.log(`Screenshot saved: ${ screenshotPath }`);
-  }
-  catch (ex) {
+  } catch (ex) {
     console.log(`Screenshot taking has failed. Reason: ${ ex }`);
   }
 }
