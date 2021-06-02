@@ -4,7 +4,9 @@ import { makeScreenshot } from '../testWrapper';
 import { tagPageObject } from './utilities';
 
 export const landingPage = page => tagPageObject('landingPage', {
+
   expectVisitingSelf: () => waitForSelector(page, SEL.PAGE_LANDING),
+
   fillOutTheAddressAndTimeForm: async (testData) => {
     await waitForSelector(page, SEL.FORM_PICK_ADDRESS_TIME);
     await waitClickAndType(page, SEL.FORM_FIELD_ADDRESS, testData.address);
@@ -15,6 +17,7 @@ export const landingPage = page => tagPageObject('landingPage', {
 
     await makeScreenshot(page, { label: 'time_entry' });
   },
+
   submitTheAddressAndTimeFormSuccessfully: async () => {
     await waitForSelectorAndClick(page, SEL.BTN_SUBMIT_FORM_PICK_ADDRESS_TIME);
     await waitForTimeout(page, 10);
@@ -23,4 +26,5 @@ export const landingPage = page => tagPageObject('landingPage', {
 
     await waitForTimeout(page, 300);
   }
+
 });

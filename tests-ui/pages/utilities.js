@@ -1,15 +1,16 @@
-const consoleOverload = [ 'log', 'group', 'groupEnd', 'warn', 'error', 'info', 'debug' ].reduce((memo, propName) => Object.assign(memo, {
-  [ propName ]: function (...args) {
-    console[ propName ](...args);
-    if (this._messages) {
-      this._messages.push({
-        timestamp: new Date().getTime(),
-        method: propName,
-        args
-      });
+const consoleOverload = [ 'log', 'group', 'groupEnd', 'warn', 'error', 'info', 'debug' ].reduce((memo, method) =>
+  Object.assign(memo, {
+    [ method ]: function (...args) {
+      console[ method ] && console[ method ](...args);
+      if (this._messages) {
+        this._messages.push({
+          timestamp: new Date().getTime(),
+          method,
+          args
+        });
+      }
     }
-  }
-}), {
+  }), {
   _messages: [],
   flush() {
     if (this._messages) {

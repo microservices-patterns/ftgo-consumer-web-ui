@@ -21,8 +21,12 @@ const CheckoutPage = () => {
     }
     if (selectedRestaurantId) {
       //dispatch(navigateToEditMenu(selectedRestaurantId));
+      void dispatch;
+      void navigateToEditMenu;
+      void selectedRestaurantId;
     } else {
       //dispatch(navigateToPickRestaurants());
+      void navigateToPickRestaurants;
     }
   }, [ cartId, cartStatus, dispatch, selectedRestaurantId ]);
 

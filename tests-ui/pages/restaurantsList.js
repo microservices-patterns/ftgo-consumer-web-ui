@@ -4,7 +4,9 @@ import { tagPageObject } from './utilities';
 import { cssSel } from '../../src/shared/e2e/helpers';
 
 export const restaurantsListPage = page => tagPageObject('restaurantsListPage', {
+
   expectVisitingSelf: () => waitForSelector(page, SEL.PAGE_RESTAURANTS_LIST),
+
   browseTheRestaurantsTableForSpecificEntryAndClickOnIt: async () => {
 
     await waitForSelector(page, SEL.TBL_RESTAURANTS_LIST);
