@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { Button, ButtonGroup } from 'reactstrap';
 import { IconMinus, IconPlus } from '../../elements/icons';
 import { PaginatedTable } from '../../elements/paginatedTable';
-import { e2eAssist } from '../../../shared/e2e';
+import { e2eAssist } from '../../../testability';
 
 export function YourTrayItems() {
 

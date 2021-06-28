@@ -1,3 +1,8 @@
+export const FOR_TESTS = 'test';
+export const FOR_RENDER = 'render';
+export const FOR_TEST_SVG = 'testSvg';
+export const FOR_RENDER_SVG = 'renderSvg';
+
 /**
  *
  * @param arr {Array<string|empty>}
@@ -12,27 +17,32 @@ export function pickHeadUntilNullish(arr) {
 
 /**
  *
- * @param {string} [role]
- * @param {string} [roleSpecifics]
- * @param {string} [personalization]
- * @return {function(arg:string): *}
+ * @param {...string} args
+ * @return {function(string): T}
  */
-export function prepareSelector(role, roleSpecifics, personalization) {
-  const selector = pickHeadUntilNullish([ role, roleSpecifics, personalization ]).join('|');
-
-  return fn => fn(selector ? selector + '|' : selector);
+export function prepareTestId(...args) {
+  return fn => fn(produceTestIdAttrValue(args));
 }
 
 /**
  *
- * @param args
- * @return {function(*): function(...[*]): *}
+ * @param {...string} args
+ * @return {function(function(string):P): function(...string): P}
  */
-export function prepareSelectorOpen(...args) {
+export function prepareTestIdOpen(...args) {
   return fn => (...args2) => {
-    const selector = pickHeadUntilNullish([ ...args, ...args2 ]).join('|');
-    return fn(selector ? selector + '|' : selector);
+    return fn(produceTestIdAttrValue([ ...args, ...args2 ]));
   };
+}
+
+/**
+ *
+ * @param {Array<?string|?number>} args
+ * @return {string|''}
+ */
+function produceTestIdAttrValue(args) {
+  const selector = pickHeadUntilNullish(args).map(String).join('|');
+  return selector ? selector + '|' : selector;
 }
 
 /**
@@ -56,11 +66,32 @@ export function e2eSelector(sel) {
   return '[data-testid=""]';
 }
 
+const implMap = {
+  [ FOR_TESTS ]: e2eSelector,
+  [ FOR_RENDER ]: e2eAttr,
+  [ FOR_TEST_SVG ]: null,
+  [ FOR_RENDER_SVG ]: null
+};
+
+/**
+ *
+ * @param {function(function(...string): function(arg:string): T, ?function(...string):function(function(string):P): function(...string): P):} cb
+ * @return {function('test'|'render'): Object<string, T|P>|T|P}
+ */
+export const defineTestIdDictionary =
+  cb =>
+    testOrRuntime => {
+      const cbResult = cb(prepareTestId, prepareTestIdOpen);
+      const impl = implMap[ testOrRuntime ] || (K => K);
+      return (typeof cbResult === 'function') ? cbResult(impl) : applyForEachPair(cbResult, impl);
+    };
+
+
 export const cssSel = val => {
   return new CssSel(val, null, '');
 };
 
-class CssSel {
+export class CssSel {
   /**
    *
    * @param val
@@ -153,3 +184,16 @@ function getValue(node) {
   }
   return node.effectiveVal;
 }
+
+/**
+ *
+ * @param obj { Object<string,function(arg: function(*): T):T>}
+ * @param fn { function(*): T}
+ * @return {Object<string, T>}
+ */
+export function applyForEachPair(obj, fn) {
+  return Object.fromEntries(
+    Array.from(Object.entries(obj || {}),
+      ([ k, v ]) => [ k, typeof v === 'function' ? v(fn) : v ]));
+}
+

@@ -4,7 +4,7 @@ import { accessCart, accessCartItems, accessCartStatus } from '../../../features
 import { navigateToEditMenu, navigateToPickRestaurants } from '../../../features/actions/navigation';
 import { Container } from 'reactstrap';
 import { accessSelectedRestaurantId } from '../../../features/restaurants/restaurantsSlice';
-import { e2eAssist } from '../../../shared/e2e';
+import { e2eAssist } from '../../../testability';
 
 const CheckoutPage = () => {
   const dispatch = useDispatch();

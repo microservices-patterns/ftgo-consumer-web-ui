@@ -9,7 +9,7 @@ import { YourTrayItems } from './yourTrayItems';
 import { MenuItems } from './menuItems';
 import { IconChevronRight } from '../../elements/icons';
 import { accessCartItems } from '../../../features/cart/cartSlice';
-import { e2eAssist } from '../../../shared/e2e';
+import { e2eAssist } from '../../../testability';
 
 
 export const RestaurantPage = ({ match }) => {

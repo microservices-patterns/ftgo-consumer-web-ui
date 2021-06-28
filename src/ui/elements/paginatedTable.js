@@ -5,8 +5,8 @@ import paginationFactory, {
   SizePerPageDropdownStandalone
 } from 'react-bootstrap-table2-paginator';
 import './reactBootstrapTableCustomization.scss';
-import { e2eAssist } from '../../shared/e2e';
 import React from 'react';
+import { e2eAssist } from '../../testability';
 
 export const PaginatedTable = ({
                                  data,

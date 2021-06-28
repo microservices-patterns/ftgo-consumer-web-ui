@@ -21,9 +21,6 @@
         "restParams": true
       }
     },
-    "_env": {
-      "node": true
-    },
    "@babel/env": {
       "node": true
     },

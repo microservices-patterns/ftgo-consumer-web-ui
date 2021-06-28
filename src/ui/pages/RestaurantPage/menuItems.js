@@ -13,7 +13,7 @@ import { Button } from 'reactstrap';
 import { IconCartPlus, IconPlus } from '../../elements/icons';
 import { PaginatedTable } from '../../elements/paginatedTable';
 import { usePrevious } from 'react-use';
-import { e2eAssist } from '../../../shared/e2e';
+import { e2eAssist } from '../../../testability';
 
 
 /**
@@ -74,7 +74,7 @@ export function MenuItems({ restaurantId }) {
     if (row.cart) {
       const cartItem = row.cart;
       return <Button color={ 'success' } size={ 'sm' } disabled={ !cartId || (cartItem.oldCount !== undefined) }
-        onClick={ handleAddToCart(row.id, row, cartItem, 1) }  { ...e2eAssist.BTN_ADD_TO_CART_ADDED }><IconPlus /></Button>;
+        onClick={ handleAddToCart(row.id, row, cartItem, 1) } { ...e2eAssist.BTN_ADD_TO_CART_ADDED }><IconPlus /></Button>;
     }
     return <Button color={ 'info' } size={ 'sm' } disabled={ !cartId }
       onClick={ handleAddToCart(row.id, row, null, 1) } { ...e2eAssist.BTN_ADD_TO_CART_FRESH }><IconCartPlus /></Button>;

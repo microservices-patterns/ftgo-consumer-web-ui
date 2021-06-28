@@ -11,7 +11,7 @@ import {
 } from '../../../features/address/addressSlice';
 import { If } from '../../elements/conditions';
 import { processFormSubmissionError } from '../../../shared/forms/submissionHandling';
-import { e2eAssist } from '../../../shared/e2e';
+import { e2eAssist } from '../../../testability';
 
 export const LandingPageForm = () => {
 

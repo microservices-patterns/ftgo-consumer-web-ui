@@ -1,7 +1,11 @@
-import { e2eAttr, e2eSelector } from './helpers';
-import { selectors } from './selectors';
+import { cssSel, defineTestIdDictionary, FOR_RENDER, FOR_RENDER_SVG, FOR_TEST_SVG, FOR_TESTS } from './helpers';
 
-
-export const e2eAssist = selectors(e2eAttr)
-
-export const SEL = selectors(e2eSelector);
+const defaultExport = Object.assign(defineTestIdDictionary, {
+  FOR_RENDER,
+  FOR_TESTS,
+  FOR_TEST_SVG,
+  FOR_RENDER_SVG,
+  cssSel
+});
+export default defaultExport;
+export { FOR_RENDER, FOR_TESTS, FOR_TEST_SVG, FOR_RENDER_SVG, defineTestIdDictionary, cssSel };

@@ -2,7 +2,7 @@ import React from 'react';
 import { LandingPageForm } from './landingPageForm';
 import { Container } from 'reactstrap';
 import { LargeTextDiv, LessLargeTextDiv } from '../../elements/textElements';
-import { e2eAssist } from '../../../shared/e2e';
+import { e2eAssist } from '../../../testability';
 
 
 const LandingPage = () => {

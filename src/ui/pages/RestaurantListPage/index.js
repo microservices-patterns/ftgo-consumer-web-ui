@@ -14,7 +14,7 @@ import { keepSelectedRestaurant } from '../../../features/restaurants/restaurant
 import { SelectedAddressRow } from '../../components/SelectedAddressRow';
 import { PaginatedTable } from '../../elements/paginatedTable';
 import { resetCart } from '../../../features/cart/cartSlice';
-import { e2eAssist } from '../../../shared/e2e';
+import { e2eAssist } from '../../../testability';
 
 export const RestaurantListPage = () => {
 

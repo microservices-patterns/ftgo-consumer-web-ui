@@ -1,7 +1,7 @@
 import { waitForSelector, waitForSelectorAndClick, waitForSelectorWithText } from '../puppeteerExtensions';
 import { SEL } from '../selectors';
 import { tagPageObject } from './utilities';
-import { cssSel } from '../../src/shared/e2e/helpers';
+import { cssSel } from '../../src/shared/e2e';
 
 export const restaurantsListPage = page => tagPageObject('restaurantsListPage', {
 

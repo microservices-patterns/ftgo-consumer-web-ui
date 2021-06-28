@@ -6,7 +6,7 @@ import {
 } from '../puppeteerExtensions';
 import { MOD, SEL } from '../selectors';
 import { tagPageObject } from './utilities';
-import { cssSel } from '../../src/shared/e2e/helpers';
+import { cssSel } from '../../src/shared/e2e';
 
 export const restaurantMenuPage = page => tagPageObject('restaurantMenuPage', {
 
@@ -18,7 +18,7 @@ export const restaurantMenuPage = page => tagPageObject('restaurantMenuPage', {
     await waitForSelector(page, cssSel(SEL.BTN_TO_CHECKOUT));
   },
 
-  pickOneItem: async () => {
+  putMenuItemIntoACart: async () => {
 
     await waitForSelector(page, cssSel(SEL.BTN_TO_CHECKOUT).mod(MOD.ATTR_DISABLED));
     await waitForSelector(page, cssSel(SEL.INFO_TRAY_IS_EMPTY));
@@ -34,7 +34,7 @@ export const restaurantMenuPage = page => tagPageObject('restaurantMenuPage', {
     await waitForSelector(page, SEL.BTN_ADD_TO_CART_FRESH);
 
     await waitForSelectorAndClick(page, SEL.BTN_ADD_TO_CART_FRESH);
-    await waitForTimeout(page, 10);
+//    await waitForTimeout(page, 10);
     await waitForSelector(page, cssSel(SEL.BTN_ADD_TO_CART).mod(MOD.ATTR_DISABLED));
 
     await waitForTimeout(page, 1000);

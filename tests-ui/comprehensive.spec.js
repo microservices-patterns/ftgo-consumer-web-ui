@@ -115,7 +115,7 @@ describe('Interaction with the entire FTGO UI application:', () => {
 
     test(`[restaurant menu page] Structure check, menu picking, going to checkout`, async () => {
       await restaurantMenuPage(page).checkStructure();
-      await restaurantMenuPage(page).pickOneItem();
+      await restaurantMenuPage(page).putMenuItemIntoACart();
       await restaurantMenuPage(page).proceedToCheckout();
 
       await checkoutPage(page).expectVisitingSelf();
