@@ -26,6 +26,9 @@ export const element = (page, sel) => {
     },
     expectDisabled() {
       return waitForSelector(page, cssSel(sel).mod('[disabled]'))
+    },
+    expectNotDisabled() {
+      return waitForSelector(page, cssSel(sel).mod(':not([disabled])'))
     }
   }
 }
