@@ -108,7 +108,7 @@ describe('Interaction with the entire FTGO UI application:', () => {
 
     test(`[restaurants list page] Navigation, picking correct restaurant, landing of Menu page`, async () => {
 
-      await restaurantsListPage(page).browseTheRestaurantsTableForSpecificEntryAndClickOnIt();
+      await restaurantsListPage(page).browseForRestaurantWithMenuItems();
       await restaurantMenuPage(page).expectVisitingSelf();
 
     });

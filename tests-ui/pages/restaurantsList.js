@@ -2,14 +2,17 @@ import { waitForSelector, waitForSelectorAndClick, waitForSelectorWithText } fro
 import { SEL } from '../selectors';
 import { tagPageObject } from './utilities';
 import { cssSel } from '../../src/shared/e2e';
+import { element } from '../helpers';
+
+const tableRestaurantsList = page => element(page, SEL.PAGE_RESTAURANTS_LIST);
 
 export const restaurantsListPage = page => tagPageObject('restaurantsListPage', {
 
-  expectVisitingSelf: () => waitForSelector(page, SEL.PAGE_RESTAURANTS_LIST),
+  expectVisitingSelf: () => tableRestaurantsList(page).ensurePresent(),
 
-  browseTheRestaurantsTableForSpecificEntryAndClickOnIt: async () => {
+  browseForRestaurantWithMenuItems: async () => {
 
-    await waitForSelector(page, SEL.TBL_RESTAURANTS_LIST);
+    await tableRestaurantsList(page).ensurePresent()
 
     const paginationControlSel = cssSel(SEL.TBL_RESTAURANTS_LIST).desc(SEL.CTL_PAGINATION_FOR_TABLE);
     await waitForSelector(page, paginationControlSel);
