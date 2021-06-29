@@ -7,7 +7,6 @@ const menu = [
     "position": 1,
     "price": "250.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Appeteasers",
     "discount": {
       "type": "",
@@ -21,7 +20,6 @@ const menu = [
     "position": 1,
     "price": "250.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Appeteasers",
     "discount": {
       "type": "",
@@ -35,7 +33,6 @@ const menu = [
     "position": 1,
     "price": "215.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Appeteasers",
     "discount": {
       "type": "",
@@ -49,7 +46,6 @@ const menu = [
     "position": 1,
     "price": "215.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Appeteasers",
     "discount": {
       "type": "",
@@ -63,7 +59,6 @@ const menu = [
     "position": 1,
     "price": "205.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Appeteasers",
     "discount": {
       "type": "",
@@ -77,7 +72,6 @@ const menu = [
     "position": 1,
     "price": "615.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Appeteasers",
     "discount": {
       "type": "",
@@ -91,7 +85,6 @@ const menu = [
     "position": 1,
     "price": "520.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Appeteasers",
     "discount": {
       "type": "",
@@ -105,7 +98,6 @@ const menu = [
     "position": 1,
     "price": "190.00",
     "consumable": "1:1",
-    "cuisine_name": "Fast Food",
     "category_name": "Fino sides",
     "discount": {
       "type": "",
@@ -119,7 +111,6 @@ const menu = [
     "position": 2,
     "price": "330.00",
     "consumable": "1:1",
-    "cuisine_name": "Fast Food",
     "category_name": "Fino sides",
     "discount": {
       "type": "",
@@ -133,7 +124,6 @@ const menu = [
     "position": 1,
     "price": "190.00",
     "consumable": "1:1",
-    "cuisine_name": "Fast Food",
     "category_name": "Fino sides",
     "discount": {
       "type": "",
@@ -147,7 +137,6 @@ const menu = [
     "position": 2,
     "price": "330.00",
     "consumable": "1:1",
-    "cuisine_name": "Fast Food",
     "category_name": "Fino sides",
     "discount": {
       "type": "",
@@ -161,7 +150,6 @@ const menu = [
     "position": 1,
     "price": "385.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Peri-peri chicken",
     "discount": {
       "type": "",
@@ -175,7 +163,6 @@ const menu = [
     "position": 2,
     "price": "485.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Peri-peri chicken",
     "discount": {
       "type": "",
@@ -189,7 +176,6 @@ const menu = [
     "position": 3,
     "price": "575.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Peri-peri chicken",
     "discount": {
       "type": "",
@@ -203,7 +189,6 @@ const menu = [
     "position": 1,
     "price": "685.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Peri-peri chicken",
     "discount": {
       "type": "",
@@ -217,7 +202,6 @@ const menu = [
     "position": 2,
     "price": "785.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Peri-peri chicken",
     "discount": {
       "type": "",
@@ -231,7 +215,6 @@ const menu = [
     "position": 3,
     "price": "875.00",
     "consumable": "1:1",
-    "cuisine_name": "Indian",
     "category_name": "Peri-peri chicken",
     "discount": {
       "type": "",

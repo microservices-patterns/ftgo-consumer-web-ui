@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { postCreateNewCart, putUpdateCartWithItem } from '../actions/api';
+import { getCart, putUpdateCartWithItem } from '../actions/api';
 
 const ns = 'cart';
 
-export const obtainNewCartAsyncThunk = createAsyncThunk(
+export const obtainCartAsyncThunk = createAsyncThunk(
   'cart/createNew',
   async (data, { rejectWithValue, dispatch }) => {
     void data;
-    return postCreateNewCart();
+    return getCart();
   });
 
 export const updateCartWithItemAsyncThunk = createAsyncThunk(
@@ -22,7 +22,8 @@ export const updateCartWithItemAsyncThunk = createAsyncThunk(
   });
 
 const initialState = {
-  id: null,
+  id: '123',
+  subTotal: 0,
   status: null,
   items: []
 };
@@ -38,14 +39,14 @@ export const cartSlice = createSlice({
     resetCart: () => Object.assign({}, initialState, { items: [] })
   },
   extraReducers: builder => builder
-    .addCase(obtainNewCartAsyncThunk.pending, (state, { payload }) => {
+    .addCase(obtainCartAsyncThunk.pending, (state, { payload }) => {
       state.status = 'pending';
     })
-    .addCase(obtainNewCartAsyncThunk.fulfilled,
+    .addCase(obtainCartAsyncThunk.fulfilled,
       (state, { payload, ...rest }) => {
         return Object.assign({}, state, payload, { status: 'ready' });
       })
-    .addCase(obtainNewCartAsyncThunk.rejected, (state, { payload, ...rest }) => {
+    .addCase(obtainCartAsyncThunk.rejected, (state, { payload, ...rest }) => {
       state.status = 'error';
       state.items = [];
     })

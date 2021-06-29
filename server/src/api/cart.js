@@ -12,15 +12,15 @@ const cartResource = ({ config, db }) => resource({
   /** Property name to store preloaded entity on `request`. */
   id: facetName,
 
-  /** POST / - Create a new entity */
-  create(req, res) {
+  index({ params }, res) {
     inMemoCart.current = Object.assign({}, initialCart, {
-      id: String(new Date().getTime()),
+      subtotal: 0.0,
       items: []
     });
 
     res.json(inMemoCart.current);
   },
+
 
   /** PUT /:id - Update a given entity */
   update({ body, ...req }, res) {
@@ -35,7 +35,7 @@ const cartResource = ({ config, db }) => resource({
         const result = {
           id,
           count: body.qty,
-          meta: { restaurantId: body.restaurantId }
+          restaurantId: body.restaurantId
         };
         inMemoCart.current.items = [
           ...inMemoCart.current.items,
@@ -43,7 +43,7 @@ const cartResource = ({ config, db }) => resource({
         ];
         console.log(JSON.stringify(inMemoCart.current.items, null, 2));
         return new Promise(rs => setTimeout(() => {
-          res.send(result);
+          res.send(inMemoCart.current);
           rs();
         }, 2000));
       } else {
@@ -53,7 +53,7 @@ const cartResource = ({ config, db }) => resource({
         //        res.send(result);
         console.log(JSON.stringify(inMemoCart.current.items, null, 2));
         return new Promise(rs => setTimeout(() => {
-          res.send(result);
+          res.send(inMemoCart.current);
           rs();
         }, 2000));
       }

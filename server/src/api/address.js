@@ -15,9 +15,9 @@ const addressResource = ({ config, db }) => resource({
   create(req, res) {
 
     const { body } = req;
-    const { address, time, origin } = body;
-    if (!address || !time || !origin) {
-      res.status(400).json({
+    const { address, time } = body;
+    if (!address || !time) {
+      return res.status(400).json({
         message: `Missing field`,
         code: 400,
         errors: {

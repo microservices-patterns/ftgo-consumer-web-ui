@@ -4,7 +4,7 @@ import {
   accessCart,
   accessCartItems,
   accessCartStatus,
-  obtainNewCartAsyncThunk
+  obtainCartAsyncThunk
 } from '../../../features/cart/cartSlice';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { retrieveRestaurantByIdAsyncThunk } from '../../../features/address/addressSlice';
@@ -23,7 +23,7 @@ import { e2eAssist } from '../../../testability';
     'position': 1,
     'price': '250.00',
     'consumable': '1:1',
-    'cuisine_name': 'Indian',
+    'cuisine': 'Indian',
     'category_name': 'Appeteasers',
     'discount': {
       'type': '',
@@ -64,7 +64,7 @@ export function MenuItems({ restaurantId }) {
     if (cartStatus) {
       return;
     }
-    dispatch(obtainNewCartAsyncThunk());
+    dispatch(obtainCartAsyncThunk());
   }, [ cartStatus, dispatch ]);
 
 
@@ -90,7 +90,7 @@ export function MenuItems({ restaurantId }) {
       text: 'Food Item',
       sort: true
     }, {
-      dataField: 'cuisine_name',
+      dataField: 'cuisine',
       text: 'Cuisine',
       sort: true
     }, {

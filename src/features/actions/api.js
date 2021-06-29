@@ -7,18 +7,18 @@ const urlResolver = obtainFQDNUrl(API_URL, window.location);
 
 const apiRoutes = prepareRoutesForFetch({
   postAddressObtainRestaurants: [
-    `POST /address`,
-    (address, time, origin) => ({ address, time, origin })
+    `POST /cart/address`,
+    (address, time) => ({ address, time })
   ],
   getRestaurantById: restaurantId => `/restaurants/${ restaurantId }`,
-  postCreateNewCart: `POST /cart`,
+  getCart: `GET /cart`,
   putUpdateCartWithItem: [
-    (cartId, restaurantId, itemId, qty) => `PUT /cart/${ cartId }`,
-    (cartId, restaurantId, itemId, qty) => ({ cartId, restaurantId, itemId, qty })
+    (cartId, restaurantId, itemId, quantity) => `PUT /cart/${ cartId }`,
+    (cartId, restaurantId, itemId, quantity) => ({ cartId, restaurantId, itemId, quantity })
   ]
 }, urlResolver);
 
-export const { postAddressObtainRestaurants, getRestaurantById, putUpdateCartWithItem, postCreateNewCart } = apiRoutes;
+export const { postAddressObtainRestaurants, getRestaurantById, putUpdateCartWithItem, getCart } = apiRoutes;
 
 function prepareRoutesForFetch(routes, urlResolver) {
   return Object.fromEntries(Array.from(Object.entries(routes), ([ k, v ]) => {
