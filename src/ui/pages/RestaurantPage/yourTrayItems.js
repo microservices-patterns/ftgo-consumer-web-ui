@@ -2,17 +2,17 @@ import { useSelector } from 'react-redux';
 import { accessCart, accessCartItems, accessCartStatus } from '../../../features/cart/cartSlice';
 import { createMap, useUpdateCartHandler } from './hooks';
 import { useCallback, useMemo } from 'react';
-import { Button, ButtonGroup } from 'reactstrap';
-import { IconMinus, IconPlus } from '../../elements/icons';
+import { Button, ButtonGroup, Card, CardBody, CardTitle } from 'reactstrap';
+import { IconMinus, IconPlus, IconTrash } from '../../elements/icons';
 import { PaginatedTable } from '../../elements/paginatedTable';
 import { e2eAssist } from '../../../testability';
 
-export function YourTrayItems() {
+export function YourTrayItems({ checkout }) {
 
   const cartId = useSelector(accessCart('id'));
   const cartStatus = useSelector(accessCartStatus());
   const cartItems = useSelector(accessCartItems());
-  const cartItemsMap = useMemo(() => createMap(cartItems, i => i.id), [ cartItems ]);
+  const cartItemsMap = useMemo(() => createMap(cartItems || [], i => i.id), [ cartItems ]);
   const handleAddToCart = useUpdateCartHandler(cartId, cartItemsMap, undefined);
 
 
@@ -27,12 +27,9 @@ export function YourTrayItems() {
 
   const columns = useMemo(() => ([
     {
-      dataField: 'id',
-      text: 'Ref ID'
-    }, {
       dataField: 'name',
       text: 'Food Item',
-      sort: true
+      sort: !checkout
     },
     {
       dataField: 'actions',
@@ -50,7 +47,7 @@ export function YourTrayItems() {
       formatter: actionColumnFormatter,
       formatExtraData: cartId
     }
-  ]), [ actionColumnFormatter, cartId ]);
+  ]), [ actionColumnFormatter, cartId, checkout ]);
 
   const defaultSorted = [ {
     dataField: 'name',
@@ -59,6 +56,18 @@ export function YourTrayItems() {
 
   if (!cartId || (cartStatus !== 'ready')) {
     return <>Updating the tray...</>;
+  }
+
+  if (checkout) {
+    return cartItems.map((item, idx) => (<Card key={ item.id } className="mb-2">
+      <CardBody>
+        <CardTitle tag="h5">{ item.name }
+          <div className="float-left pr-2">{ actionColumnFormatter(null, item, idx, cartId) }</div>
+          <div className="float-right"><Button size="sm" outline  onClick={ handleAddToCart(item.id, undefined, item, -item.count) }><IconTrash /></Button></div>
+          <div className="float-right pr-2">${ item.price * item.count }</div>
+        </CardTitle>
+      </CardBody>
+    </Card>));
   }
 
   return <PaginatedTable

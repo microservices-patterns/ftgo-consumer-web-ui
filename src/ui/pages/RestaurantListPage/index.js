@@ -43,6 +43,10 @@ export const RestaurantListPage = () => {
     text: 'Restaurant',
     sort: true
   }, {
+    dataField: 'cuisine',
+    text: 'Cuisine',
+    sort: true
+  }, {
     dataField: 'address',
     text: 'Address',
     sort: true

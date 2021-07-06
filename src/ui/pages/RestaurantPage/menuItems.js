@@ -90,10 +90,6 @@ export function MenuItems({ restaurantId }) {
       text: 'Food Item',
       sort: true
     }, {
-      dataField: 'cuisine',
-      text: 'Cuisine',
-      sort: true
-    }, {
       dataField: 'category_name',
       text: 'Category',
       sort: true
