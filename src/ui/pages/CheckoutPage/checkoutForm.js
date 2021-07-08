@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { CardElement, useElements, useStripe } from './cardElement';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   accessCartItems,
@@ -33,6 +33,7 @@ export function CheckoutForm() {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     void handleCreatePaymentIntent(cartItems);
+    setSucceeded(false);
   }, [ cartItems, handleCreatePaymentIntent ]);
 
   const cardStyle = {
@@ -61,10 +62,11 @@ export function CheckoutForm() {
   }, []);
 
   const handleSubmit = useCallback(async ev => {
+
     ev.preventDefault();
     setProcessing(true);
 
-    const [ err, card ] = safelyExecuteSync(() => elements.getElement(CardElement))();
+    const [ err, card ] = safelyExecuteSync(() => elements.getCardValue())();
     if (err) {
       console.log(err);
       debugger;
@@ -78,7 +80,7 @@ export function CheckoutForm() {
     });
 
     if (payload.error) {
-      setError(`Payment failed ${ payload.error.message }`);
+      setError(`${ payload.error.message }`);
       setProcessing(false);
     } else {
       setError(null);
@@ -95,7 +97,7 @@ export function CheckoutForm() {
   return (
     <form id="payment-form" onSubmit={ handleSubmit }>
       <CardElement id="card-element" options={ cardStyle } onChange={ handleChange } />
-      <button
+      <button type="submit"
         disabled={ processing || disabled || succeeded }
         id="submit"
       >
@@ -109,19 +111,13 @@ export function CheckoutForm() {
       </button>
       {/* Show any error that happens when processing the payment */ }
       { error && (
-        <div className="card-error" role="alert">
-          { error }
+        <div className="card-error text-danger my-2" role="alert">
+          Payment failed: <strong>{ error }</strong>
         </div>
       ) }
       {/* Show a success message upon completion */ }
-      <p className={ succeeded ? 'result-message' : 'result-message d-none' }>
-        Payment succeeded, see the result in your
-        <a
-          href={ `https://dashboard.stripe.com/test/payments` } target="_blank" rel="noreferrer"
-        >
-          { ' ' }
-          Stripe dashboard.
-        </a> Refresh the page to pay again.
+      <p className={ succeeded ? 'result-message text-success my-2 font-weight-bold' : 'd-none' }>
+        Payment succeeded!
       </p>
     </form>
   );
