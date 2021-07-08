@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getCart, putUpdateCartWithItem } from '../actions/api';
+import { getCart, postCreatePaymentIntent, putUpdateCartWithItem } from '../actions/api';
 
 const ns = 'cart';
 
@@ -21,22 +21,36 @@ export const updateCartWithItemAsyncThunk = createAsyncThunk(
     return putUpdateCartWithItem(cartId, restaurantId, itemId, qty);
   });
 
+export const postCreatePaymentIntentAsyncThunk = createAsyncThunk(
+  'payment/createPaymentIntent',
+  async (data, { dispatch }) => {
+    const { items } = data;
+    return postCreatePaymentIntent(items);
+  }
+);
+
 const initialState = {
   id: '123',
   subTotal: 0,
   status: null,
-  items: []
+  items: [],
+  paymentSuccessful: null
 };
 
 export const accessCart = (propName) => ({ [ ns ]: state }) => propName ? (state?.[ propName ]) : state;
 export const accessCartItems = () => ({ [ ns ]: state }) => state?.items ?? [];
 export const accessCartStatus = () => ({ [ ns ]: state }) => state?.status;
+export const accessPaymentSuccessful = () => ({ [ ns ]: state }) => state?.paymentSuccessful;
 
 export const cartSlice = createSlice({
   name: ns,
   initialState,
   reducers: {
-    resetCart: () => Object.assign({}, initialState, { items: [] })
+    resetCart: () => Object.assign({}, initialState, { items: [] }),
+    paymentSuccessful: (state) => {
+      debugger;
+      state.paymentSuccessful = true; },
+    resetPaymentSuccessful: (state) => Object.assign({}, initialState, { items: [] })
   },
   extraReducers: builder => builder
     .addCase(obtainCartAsyncThunk.pending, (state, { payload }) => {
@@ -112,9 +126,13 @@ export const cartSlice = createSlice({
       ];
 
     })
+
+    .addCase(postCreatePaymentIntentAsyncThunk.pending, (state, { payload, meta }) => state)
+    .addCase(postCreatePaymentIntentAsyncThunk.fulfilled, (state, { payload, meta }) => state)
+    .addCase(postCreatePaymentIntentAsyncThunk.rejected, (state, { payload, meta }) => state)
 });
 
-export const { resetCart } = cartSlice.actions;
+export const { resetCart, paymentSuccessful, resetPaymentSuccessful } = cartSlice.actions;
 
 const namedReducer = {
   [ ns ]: cartSlice.reducer

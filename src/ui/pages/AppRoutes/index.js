@@ -9,6 +9,7 @@ const LoginPage = lazy(() => import(/* webpackChunkName: "login" */ '../LoginPag
 const RestaurantListPage = lazy(() => import(/* webpackChunkName: "places" */ '../RestaurantListPage'));
 const RestaurantPage = lazy(() => import(/* webpackChunkName: "place" */ '../RestaurantPage'));
 const CheckoutPage = lazy(() => import(/* webpackChunkName: "checkout" */ '../CheckoutPage'));
+const ThankYouPage = lazy(() => import(/* webpackChunkName: "thankyou" */ '../ThankYouPage'));
 
 const repackWithComponentRender = ([ path, Component ]) => [ path, ({
   path,
@@ -20,6 +21,7 @@ const routesMap = new Map([
   [ routePaths.restaurants, RestaurantListPage ],
   [ routePaths.restaurant, RestaurantPage ],
   [ routePaths.checkout, CheckoutPage ],
+  [ routePaths.thankyou, ThankYouPage ],
   [ routePaths.login, LoginPage ]
 ].map(repackWithComponentRender));
 
@@ -29,6 +31,7 @@ const routes = [
   routePaths.restaurant,
   routePaths.restaurants,
   routePaths.checkout,
+  routePaths.thankyou,
 ].filter(Boolean)
   .map(item => typeof item === 'string' ?
     <Route key={ item } path={ item } { ...routesMap.get(item) } /> :

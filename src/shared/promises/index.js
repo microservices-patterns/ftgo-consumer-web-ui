@@ -22,6 +22,17 @@ export async function safelyExecuteAsync(promise) {
   }
 }
 
+export function safelyExecuteSync(fn) {
+  return (...args) => {
+    try {
+      return [ null, fn(...args) ];
+    } catch (ex) {
+      return [ ex ];
+    }
+  };
+
+}
+
 export function stubAsync(promise) {
   promise.then(() => void 0, () => void 0);
   return promise;
@@ -51,7 +62,7 @@ export function blockedAsync(asyncFn) {
   };
 }
 
-export function ExposedPromise () {
+export function ExposedPromise() {
   const ctx = this;
   return Object.assign(new Promise((resolve, reject) => {
     Object.assign(ctx, { resolve, reject });

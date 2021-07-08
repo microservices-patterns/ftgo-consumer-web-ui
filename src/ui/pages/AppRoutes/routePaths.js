@@ -3,5 +3,6 @@ export const routePaths = {
   restaurants: '/place',
   restaurant: '/place/:placeId',
   checkout: '/checkout',
+  thankyou: '/thankyou',
   login: '/login'
 };

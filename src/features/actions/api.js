@@ -15,10 +15,14 @@ const apiRoutes = prepareRoutesForFetch({
   putUpdateCartWithItem: [
     (cartId, restaurantId, itemId, quantity) => `PUT /cart/${ cartId }`,
     (cartId, restaurantId, itemId, quantity) => ({ cartId, restaurantId, itemId, quantity })
-  ]
+  ],
+  postCreatePaymentIntent: [
+    `POST /payment/intent`,
+    (items) => ({ items })
+  ],
 }, urlResolver);
 
-export const { postAddressObtainRestaurants, getRestaurantById, putUpdateCartWithItem, getCart } = apiRoutes;
+export const { postAddressObtainRestaurants, getRestaurantById, putUpdateCartWithItem, getCart, postCreatePaymentIntent } = apiRoutes;
 
 function prepareRoutesForFetch(routes, urlResolver) {
   return Object.fromEntries(Array.from(Object.entries(routes), ([ k, v ]) => {

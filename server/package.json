@@ -7,21 +7,19 @@
     "dev": "PORT=8080 nodemon -w src --exec \"babel-node src --presets @babel/preset-env\"",
     "build": "$(npm bin)/babel src -s -D -d dist --presets @babel/preset-env",
     "start": "PORT=8080 node dist",
-    "prestart": "npm run -s build",
+    "prestart": "npm run -s build && source .env && [ -f \".env.local\" ] && source .env.local",
     "test": "eslint src"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
-
     "parserOptions": {
       "ecmaVersion": 7,
       "sourceType": "module",
       "ecmaFeatures": {
-
         "restParams": true
       }
     },
-   "@babel/env": {
+    "@babel/env": {
       "node": true
     },
     "rules": {
@@ -34,12 +32,16 @@
   "author": "Jason Miller <jason@developit.ca>",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.14.6",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
+    "core-js": "^3.15.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "morgan": "^1.10.0",
-    "resource-router-middleware": "^0.7.0"
+    "regenerator-runtime": "^0.13.7",
+    "resource-router-middleware": "^0.7.0",
+    "stripe": "^8.160.0"
   },
   "devDependencies": {
     "@babel/node": "^7.14.2",

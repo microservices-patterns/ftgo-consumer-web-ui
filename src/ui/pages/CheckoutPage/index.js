@@ -1,14 +1,26 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { accessCart, accessCartItems, accessCartStatus } from '../../../features/cart/cartSlice';
-import { navigateToEditMenu, navigateToPickRestaurants } from '../../../features/actions/navigation';
-import { Button, Col, Container, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import {
+  accessCart,
+  accessCartItems,
+  accessCartStatus,
+  accessPaymentSuccessful
+} from '../../../features/cart/cartSlice';
+import {
+  navigateToEditDeliveryAddress,
+  navigateToEditMenu,
+  navigateToPickRestaurants,
+  navigateToThankYou
+} from '../../../features/actions/navigation';
+import { Button, Col, Container, Row } from 'reactstrap';
 import { accessSelectedRestaurantId } from '../../../features/restaurants/restaurantsSlice';
 import { e2eAssist } from '../../../testability';
 import { SelectedAddressRow } from '../../components/SelectedAddressRow';
 import { SelectedRestaurantRow } from '../../components/SelectedRestaurantRow';
 import { YourTrayItems } from '../RestaurantPage/yourTrayItems';
 import { OrderInfo } from './orderInfo';
+import { PaymentModal } from './paymentModal';
+
 
 const CheckoutPage = () => {
   const dispatch = useDispatch();
@@ -16,6 +28,15 @@ const CheckoutPage = () => {
   const cartItems = useSelector(accessCartItems());
   const cartId = useSelector(accessCart('id'));
   const selectedRestaurantId = useSelector(accessSelectedRestaurantId());
+  const recentPaymentSuccess = useSelector(accessPaymentSuccessful());
+
+  void cartItems;
+
+  useEffect(() => {
+    if (!selectedRestaurantId) {
+      dispatch(navigateToEditDeliveryAddress());
+    }
+  }, [ dispatch, selectedRestaurantId ]);
 
   const handleChangeTray = useCallback(() => {
     dispatch(navigateToEditMenu(selectedRestaurantId));
@@ -23,12 +44,19 @@ const CheckoutPage = () => {
 
   const [ showPaymentModal, setShowPaymentModal ] = useState(false);
 
-  const toggle = useCallback(() => setShowPaymentModal(!showPaymentModal), [ showPaymentModal ]);
+  const toggle = useCallback(() => {
+    setShowPaymentModal(!showPaymentModal);
+    if (recentPaymentSuccess !== true) {
+      debugger;
+      return;
+    }
+    dispatch(navigateToThankYou());
+  }, [ dispatch, recentPaymentSuccess, showPaymentModal ]);
+
   const handleRequestPayment = useCallback(() => {
     setShowPaymentModal(true);
   }, []);
 
-  void cartItems;
 
   useEffect(() => {
     if (!showPaymentModal) {
@@ -59,6 +87,7 @@ const CheckoutPage = () => {
   }, [ cartId, cartStatus, dispatch, selectedRestaurantId ]);
 
   if (!cartId || (cartStatus !== 'ready')) {
+    debugger;
     return null;
   }
 
@@ -95,16 +124,7 @@ const CheckoutPage = () => {
       </Row>
 
     </Container>
-    <Modal isOpen={ showPaymentModal } toggle={ toggle }>
-      <ModalHeader toggle={ toggle }>Payment Details:</ModalHeader>
-      <ModalBody>
-        StripeElements
-      </ModalBody>
-      <ModalFooter>
-        <Button color="primary" onClick={ toggle }>Confirm Payment</Button>{ ' ' }
-        <Button color="secondary" onClick={ toggle }>Cancel</Button>
-      </ModalFooter>
-    </Modal>
+    <PaymentModal show={ showPaymentModal } toggle={ toggle } showDismiss={ recentPaymentSuccess === true } />
   </div>;
 };
 
