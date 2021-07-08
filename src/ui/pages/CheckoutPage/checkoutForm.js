@@ -27,7 +27,7 @@ export function CheckoutForm() {
   const handleCreatePaymentIntent = useCallback(async (items) => {
     // POST api/payment/intent:
     const { payload } = await dispatch(postCreatePaymentIntentAsyncThunk({ items }));
-    setClientSecret(payload.clientSecret);
+    setClientSecret(payload?.clientSecret ?? '');
   }, [ dispatch ]);
 
   useEffect(() => {
