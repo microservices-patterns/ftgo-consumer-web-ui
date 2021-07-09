@@ -12,7 +12,7 @@ export const restaurantsListPage = page => tagPageObject('restaurantsListPage', 
 
   browseForRestaurantWithMenuItems: async () => {
 
-    await tableRestaurantsList(page).ensurePresent()
+    await tableRestaurantsList(page).ensurePresent();
 
     const paginationControlSel = cssSel(SEL.TBL_RESTAURANTS_LIST).desc(SEL.CTL_PAGINATION_FOR_TABLE);
     await waitForSelector(page, paginationControlSel);

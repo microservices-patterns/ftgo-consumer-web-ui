@@ -7,6 +7,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { LandingPageForm } from './landingPageForm';
 
 describe(`src/ui/pages/LandingPage/landingPageForm.js`, () => {
+
   describe(`LandingPageForm component`, () => {
 
 

@@ -2,7 +2,7 @@
 
 //await waitClickAndType(page, SEL.FORM_FIELD_ADDRESS, testData.address);
 //await waitForTimeout(page, 10);
-import { waitClickAndType, waitForSelector, waitForSelectorAndClick } from '../puppeteerExtensions';
+import { waitClickAndType, waitForSelector, waitForSelectorAndClick, waitForTimeout } from '../puppeteerExtensions';
 import { cssSel } from '../../src/shared/e2e';
 
 export const textField = (page, sel) => {
@@ -14,21 +14,22 @@ export const textField = (page, sel) => {
       return waitForSelector(page, sel);
     },
   };
-}
+};
 
 export const element = (page, sel) => {
   return {
     ensurePresent() {
       return waitForSelector(page, sel);
     },
-    click() {
-      return waitForSelectorAndClick(page, sel);
+    async click() {
+      await waitForSelectorAndClick(page, sel);
+      return waitForTimeout(page, 10);
     },
-    expectDisabled() {
-      return waitForSelector(page, cssSel(sel).mod('[disabled]'))
+    async expectDisabled() {
+      return waitForSelector(page, cssSel(sel).mod('[disabled]'));
     },
     expectNotDisabled() {
-      return waitForSelector(page, cssSel(sel).mod(':not([disabled])'))
+      return waitForSelector(page, cssSel(sel).mod(':not([disabled])'));
     }
-  }
-}
+  };
+};
