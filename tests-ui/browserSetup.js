@@ -26,13 +26,15 @@ export function setUpBrowserAndPage(testLifecycleHooks, context, viewport, setPa
       slowMo: 2,
       args: [
         `--window-size=${ width },${ height }`,
-        // MICROSERVICES_ASSESSMENT_ENV:  dev - local machine
+        // FTGO_ENV:  dev - local machine
         process.env.FTGO_ENV === 'dev' ? '' : '--no-sandbox',
         '--disable-dev-shm-usage',
         '--disable-setuid-sandbox',
         '--disable-features=site-per-process',
         '--disable-accelerated-2d-canvas',
-        '--disable-gpu'
+        '--disable-gpu',
+        '--disable-web-security',
+        '--user-data-dir=~/.'
       ]
     })));
     if (launchErr || !browser) {
