@@ -6,27 +6,9 @@
   "scripts": {
     "dev": "PORT=8080 nodemon -w src --exec \"babel-node src\"",
     "build": "$(npm bin)/babel src -s -D -d dist",
-    "start": "PORT=8080 node dist",
+    "start": "PORT=8080 node --experimental-modules -r esm dist",
     "prestart": "npm run build",
     "test": "eslint src"
-  },
-  "eslintConfig": {
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "ecmaVersion": 7,
-      "sourceType": "module",
-      "ecmaFeatures": {
-        "restParams": true
-      }
-    },
-    "@babel/env": {
-      "node": true
-    },
-    "rules": {
-      "no-console": 0,
-      "no-unused-vars": 1,
-      "no-debugger": "off"
-    }
   },
   "repository": "developit/express-es6-rest-api",
   "author": "Jason Miller <jason@developit.ca>",
@@ -38,6 +20,7 @@
     "core-js": "^3.15.2",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "regenerator-runtime": "^0.13.7",

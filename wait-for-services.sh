@@ -1,3 +1,3 @@
 #! /bin/bash
 
-./_wait-for-services.sh "/api" 5000 8080
+./_wait-for-services.sh "/" 5000
