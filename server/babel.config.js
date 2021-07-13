@@ -5,9 +5,11 @@ module.exports = {
   presets: [
     [ '@babel/preset-env',
       {
-        'useBuiltIns': 'usage', // alternative mode: "entry"
-        'corejs': 2, // default would be 2
-        'targets': '> 0.25%, not dead',
+        'useBuiltIns': 'usage', // 'usage', // alternative mode: "entry"
+        //        'corejs': 2, // default would be 2
+        'targets': {
+          'node': '12'
+        },
         debug: true,
       },
     ],

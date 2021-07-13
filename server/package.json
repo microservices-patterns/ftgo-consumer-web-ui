@@ -10,7 +10,6 @@
     "prestart": "npm run build",
     "test": "eslint src"
   },
-  "type": "module",
   "eslintConfig": {
     "extends": "eslint:recommended",
     "parserOptions": {
