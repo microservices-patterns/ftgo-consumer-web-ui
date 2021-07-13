@@ -28,6 +28,9 @@ const loadingReducer = createReducer(initialState, builder => {
       state.pendingRequests--;
       state.isLoading = !!state.pendingRequests;
       state.requests[ action.meta.requestId ] = action.type.endsWith('/rejected') ? 'rejected' : 'resolved';
+      if (action.type.endsWith('/rejected')) {
+        console.log('/rejected', action.payload, action.meta)
+      }
     });
 });
 

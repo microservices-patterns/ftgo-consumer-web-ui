@@ -41,6 +41,8 @@ export function setUpBrowserAndPage(testLifecycleHooks, context, viewport, setPa
       throw new Error(`[ftgo-consumer-web-ui/tests-ui/browserSetup]: Puppeteer failed to produce a new instance of a browser when 'puppeteer.launch(..)'. Error: ${ launchErr?.message }`);
     }
 
+    console.log(`Using Puppeteer Chromium version:`, await browser.version());
+
 //    browser.on('disconnected', () => {
 //      try {
 //        console.log('Browser disconnected.');
