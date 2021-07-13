@@ -11,7 +11,6 @@ host=${DOCKER_HOST_IP:-localhost}
 
 done=false
 
-
 while [[ "$done" = false ]]; do
 	for port in $ports; do
 		url=http://${host}:${port}$path
