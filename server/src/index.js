@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import initializeDb from './db';
 import middleware from './middleware';
 import api from './api';
-import config from './config.json';
+import config from './config.js';
 
 let app = express();
 app.server = http.createServer(app);
