@@ -25,7 +25,7 @@ module.exports = {
         'regenerator': true,
       }
     ],
-    //    '@babel/plugin-transform-modules-commonjs',
+    '@babel/plugin-transform-modules-commonjs',
     '@babel/plugin-proposal-export-namespace-from',
     '@babel/plugin-proposal-class-properties',
     //    '@babel/plugin-syntax-jsx'
