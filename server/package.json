@@ -5,8 +5,9 @@
   "main": "dist",
   "scripts": {
     "dev": "PORT=8080 nodemon -w src --exec \"babel-node src\"",
-    "build": "$(npm bin)/babel src -s -D -d dist",
-    "start": "PORT=8080 node -r esm dist",
+    "build": "$(npm bin)/babel src -d dist",
+    "start": "PORT=8080 node dist",
+    "xstart": "PORT=8080 node -r esm dist",
     "xprestart": "npm run -s build",
     "test": "eslint src"
   },

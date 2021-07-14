@@ -6,9 +6,12 @@ module.exports = {
     [ '@babel/preset-env',
       {
         'useBuiltIns': 'usage', // 'usage', // alternative mode: "entry"
+        'corejs': '3.15',
         'targets': {
-          'node': '12'
+          'node': 'current'
         },
+        'shippedProposals': true,
+        'modules': 'commonjs',
         debug: true,
       },
     ],
@@ -22,17 +25,9 @@ module.exports = {
         'regenerator': true,
       }
     ],
-    '@babel/plugin-transform-modules-commonjs',
+    //    '@babel/plugin-transform-modules-commonjs',
     '@babel/plugin-proposal-export-namespace-from',
     '@babel/plugin-proposal-class-properties',
     //    '@babel/plugin-syntax-jsx'
-  ],
-  'env': {
-    'test': {
-            "plugins": ["@babel/plugin-transform-modules-commonjs"]
-    },
-    'development': {
-            "plugins": ["@babel/plugin-transform-modules-commonjs"]
-    }
-  },
+  ]
 };
