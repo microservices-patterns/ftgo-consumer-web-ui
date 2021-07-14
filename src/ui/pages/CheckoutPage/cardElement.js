@@ -1,9 +1,10 @@
 import { Input, InputGroup, InputGroupText } from 'reactstrap';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import curry from 'lodash-es/curry';
 import { accessCardValue, resetCard, updateCardValue } from '../../../features/card/cardSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { forTimeout } from '../../../shared/promises';
+import { postConfirmPaymentAsyncThunk } from '../../../features/cart/cartSlice';
+import { e2eAssist } from '../../../testability';
 
 export const useElements = () => {
   const cardValue = useSelector(accessCardValue());
@@ -14,8 +15,10 @@ export const useElements = () => {
 };
 
 export const useStripe = () => {
+  const dispatch = useDispatch();
+
   return useMemo(() => ({
-    confirmCardPayment(clientSecret, data) {
+    async confirmCardPayment(clientSecret, data) {
       const {
         payment_method: {
           card //: elements.getElement(CardElement)
@@ -24,39 +27,12 @@ export const useStripe = () => {
 
       console.log('[stripe.confirmCardPayment]', clientSecret, card);
 
-
-      // 4242 4242 4242 4242 - Payment succeeds
-      // 4000 0025 0000 3155 - Payment requires authentication
-      // 4000 0000 0000 9995 - Payment is declined
-
-
-      if (/^4242\s*4242\s*4242\s*4242$/.test(card?.card_number ?? '')) {
-        return forTimeout(1000, {
-          error: false
-        });
-      }
-      else if (/^4000\s*0025\s*0000\s*3155$/.test(card?.card_number ?? '')) {
-        const isOdd = (new Date().getTime() % 2) === 0;
-        return forTimeout(3500, {
-          error: isOdd && {
-            message: 'Payment requires authentication. The odds now are for simulating an error. Try again for successful payment.'
-          }
-        });
-      }
-      else if (/^4000\s*0000\s*0000\s*9995$/.test(card?.card_number ?? '')) {
-        return forTimeout(3000, {
-          error: {
-            message: 'Payment is declined'
-          }
-        });
-      } else {
-        return forTimeout(1000, {
-          error: false
-        });
-      }
-
+      const response = await dispatch(postConfirmPaymentAsyncThunk({ clientSecret, card }));
+      const { error, payload } = response;
+      console.log(error, payload);
+      return payload;
     }
-  }), []);
+  }), [ dispatch ]);
 };
 
 export const CardElement = ({ errors, onChange, options = {} }) => {
@@ -105,35 +81,40 @@ export const CardElement = ({ errors, onChange, options = {} }) => {
     <Input className="mb-1" placeholder="Card Number" name="card_number" type="number" value={ ccNumber } onChange={ onChangeHandler(setCCNumber) }
       { ...(errors?.card_number ? { invalid: true } : {}) }
       style={ Object.assign({}, baseStyle, errors?.card_number ? invalidStyle : {}) }
+      { ...e2eAssist.FLD_FORM_PAYMENT_FN('card_number', ...(errors?.card_number ? [ 'invalid' ] : [])) }
     />
     <InputGroup className="mb-1">
       <Input placeholder="Expires Month" name="exp_month" type="number" value={ expMonth } onChange={ onChangeHandler(setExpMonth) }
         { ...(errors?.exp_month ? { invalid: true } : {}) }
         style={ Object.assign({}, baseStyle, errors?.exp_month ? invalidStyle : {}) }
+        { ...e2eAssist.FLD_FORM_PAYMENT_FN('exp_month', ...(errors?.exp_month ? [ 'invalid' ] : [])) }
       />
       <InputGroupText>/</InputGroupText>
       <Input placeholder="Year" name="exp_year" type="number" value={ expYear } onChange={ onChangeHandler(setExpYear) }
         { ...(errors?.exp_year ? { invalid: true } : {}) }
         style={ Object.assign({}, baseStyle, errors?.exp_year ? invalidStyle : {}) }
+        { ...e2eAssist.FLD_FORM_PAYMENT_FN('exp_year', ...(errors?.exp_year ? [ 'invalid' ] : [])) }
       />
     </InputGroup>
     <InputGroup className="mb-1">
       <Input placeholder="CVV" name="cvv" type="number" value={ cvv } onChange={ onChangeHandler(setCvv) }
         { ...(errors?.cvv ? { invalid: true } : {}) }
         style={ Object.assign({}, baseStyle, errors?.cvv ? invalidStyle : {}) }
+        { ...e2eAssist.FLD_FORM_PAYMENT_FN('cvv', ...(errors?.cvv ? [ 'invalid' ] : [])) }
       />
       <Input placeholder="ZIP" name="zip" type="number" value={ zip } onChange={ onChangeHandler(setZip) }
         { ...(errors?.zip ? { invalid: true } : {}) }
         style={ Object.assign({}, baseStyle, errors?.zip ? invalidStyle : {}) }
+        { ...e2eAssist.FLD_FORM_PAYMENT_FN('zip', ...(errors?.zip ? [ 'invalid' ] : [])) }
       />
     </InputGroup>
     <div className="mb-1 text-muted">
       Try using these values for the card:
-      <pre className="d-block">
+      <pre className="d-block text-muted">
         4242 4242 4242 4242 - Payment succeeds
-        <br/>
+        <br />
         4000 0025 0000 3155 - Payment requires authentication
-        <br/>
+        <br />
 
         4000 0000 0000 9995 - Payment is declined
       </pre>

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getCart, postCreatePaymentIntent, putUpdateCartWithItem } from '../actions/api';
+import { getCart, postConfirmPayment, postCreatePaymentIntent, putUpdateCartWithItem } from '../actions/api';
 
 const ns = 'cart';
 
@@ -29,6 +29,18 @@ export const postCreatePaymentIntentAsyncThunk = createAsyncThunk(
   }
 );
 
+export const postConfirmPaymentAsyncThunk = createAsyncThunk(
+  'payment/confirm',
+  async (data, { rejectWithValue }) => {
+    try {
+      const { clientSecret, card } = data;
+      return await postConfirmPayment(clientSecret, card);
+    } catch (ex) {
+      return rejectWithValue(ex);
+    }
+  }
+);
+
 const initialState = {
   id: '123',
   subTotal: 0,
@@ -49,7 +61,8 @@ export const cartSlice = createSlice({
     resetCart: () => Object.assign({}, initialState, { items: [] }),
     paymentSuccessful: (state) => {
       debugger;
-      state.paymentSuccessful = true; },
+      state.paymentSuccessful = true;
+    },
     resetPaymentSuccessful: (state) => Object.assign({}, initialState, { items: [] })
   },
   extraReducers: builder => builder
@@ -128,8 +141,14 @@ export const cartSlice = createSlice({
     })
 
     .addCase(postCreatePaymentIntentAsyncThunk.pending, (state, { payload, meta }) => state)
-    .addCase(postCreatePaymentIntentAsyncThunk.fulfilled, (state, { payload, meta }) => state)
+    .addCase(postCreatePaymentIntentAsyncThunk.fulfilled, (state, { payload, meta }) => {
+      // TODO: get amount sum from the response and set it here
+      return state;
+    })
     .addCase(postCreatePaymentIntentAsyncThunk.rejected, (state, { payload, meta }) => state)
+    .addCase(postConfirmPaymentAsyncThunk.pending, (state, { payload, meta }) => state)
+    .addCase(postConfirmPaymentAsyncThunk.fulfilled, (state, { payload, meta }) => state)
+    .addCase(postConfirmPaymentAsyncThunk.rejected, (state, { payload, meta }) => state)
 });
 
 export const { resetCart, paymentSuccessful, resetPaymentSuccessful } = cartSlice.actions;

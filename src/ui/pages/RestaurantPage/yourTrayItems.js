@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { accessCart, accessCartItems, accessCartStatus } from '../../../features/cart/cartSlice';
 import { createMap, useUpdateCartHandler } from './hooks';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button, ButtonGroup, Card, CardBody, CardTitle } from 'reactstrap';
 import { IconMinus, IconPlus, IconTrash } from '../../elements/icons';
 import { PaginatedTable } from '../../elements/paginatedTable';
@@ -14,7 +14,6 @@ export function YourTrayItems({ checkout }) {
   const cartItems = useSelector(accessCartItems());
   const cartItemsMap = useMemo(() => createMap(cartItems || [], i => i.id), [ cartItems ]);
   const handleAddToCart = useUpdateCartHandler(cartId, cartItemsMap, undefined);
-
 
   const actionColumnFormatter = useCallback((cellContent, row, rowIdx, cartId) => {
     const disabled = !cartId || typeof row.oldCount !== 'undefined';
@@ -59,11 +58,13 @@ export function YourTrayItems({ checkout }) {
   }
 
   if (checkout) {
-    return cartItems.map((item, idx) => (<Card key={ item.id } className="mb-2">
+    return cartItems.map((item, idx) => (<Card key={ item.id } className="mb-2" { ...e2eAssist.CARD_CHECKOUT_ITEM_FN(item.name, item.price) }>
       <CardBody>
         <CardTitle tag="h5">{ item.name }
           <div className="float-left pr-2">{ actionColumnFormatter(null, item, idx, cartId) }</div>
-          <div className="float-right"><Button size="sm" outline  onClick={ handleAddToCart(item.id, undefined, item, -item.count) }><IconTrash /></Button></div>
+          <div className="float-right">
+            <Button size="sm" outline onClick={ handleAddToCart(item.id, undefined, item, -item.count) } { ...e2eAssist.BTN_CHECKOUT_REMOVE_ITEM_FN(item.name, item.price) }><IconTrash /></Button>
+          </div>
           <div className="float-right pr-2">${ item.price * item.count }</div>
         </CardTitle>
       </CardBody>

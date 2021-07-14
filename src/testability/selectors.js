@@ -38,4 +38,23 @@ export const selectors = defineTestIdDictionary((testId, testIdRest) => ({
 
   PAGE_CHECKOUT: testId('page', 'checkout'),
 
+  MODAL_PAYMENT: testId('modal', 'payment'),
+  BTN_MODAL_PAYMENT_DISMISS_FN: testIdRest('button', 'dismiss payment modal'),
+  BTN_MODAL_PAYMENT_DISMISS: testId('button', 'dismiss payment modal', 'dismiss'),
+  BTN_MODAL_PAYMENT_CANCEL: testId('button', 'dismiss payment modal', 'cancel'),
+
+  FORM_PAYMENT: testId('form', 'payment'),
+  BTN_FORM_PAYMENT_SUBMIT: testId('button', 'submit payment form'),
+  TEXT_FORM_PAYMENT_ERRORS: testId('text', 'payment form errors'),
+  TEXT_FORM_PAYMENT_SUCCESS: testId('text', 'payment form success'),
+
+  FLD_FORM_PAYMENT_FN: testIdRest('field', 'payment form'),
+
+  BTN_INVOKE_PAYMENT_MODAL: testId('button', 'invoke payment modal'),
+  BTN_CHECKOUT_MODIFY_CART: testId('button', 'modify cart', 'checkout page'),
+  BTN_CHECKOUT_REMOVE_ITEM_FN: testIdRest('button', 'remove item', 'checkout page'),
+
+  CARD_CHECKOUT_ITEM_FN: testIdRest('card', 'item', 'checkout page'),
+
+
 }));

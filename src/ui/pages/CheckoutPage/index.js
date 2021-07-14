@@ -109,7 +109,7 @@ const CheckoutPage = () => {
         </Col>
       </Row>
       <Row>
-        <Col className="text-right" md={ 10 }><Button onClick={ handleChangeTray } outline size="sm">+ Add More Items</Button></Col>
+        <Col className="text-right" md={ 10 }><Button onClick={ handleChangeTray } outline size="sm" { ...e2eAssist.BTN_CHECKOUT_MODIFY_CART }>+ Add More Items</Button></Col>
       </Row>
       <Row>
         <Col md={ 3 } className="pt-4">
@@ -120,7 +120,8 @@ const CheckoutPage = () => {
         </Col>
       </Row>
       <Row>
-        <Col className="text-right pt-4" md={ 10 }><Button onClick={ handleRequestPayment } color="primary">Pay $00.0</Button></Col>
+        <Col className="text-right pt-4" md={ 10 }><Button onClick={ handleRequestPayment } color="primary"
+          { ...e2eAssist.BTN_INVOKE_PAYMENT_MODAL }>Pay</Button></Col>
       </Row>
 
     </Container>

@@ -20,9 +20,16 @@ const apiRoutes = prepareRoutesForFetch({
     `POST /payment/intent`,
     (items) => ({ items })
   ],
+  postConfirmPayment: [
+    `POST /payment/confirm`,
+    (clientSecret, card) => ({ clientSecret, paymentMethod: { card } })
+  ]
 }, urlResolver);
 
-export const { postAddressObtainRestaurants, getRestaurantById, putUpdateCartWithItem, getCart, postCreatePaymentIntent } = apiRoutes;
+export const {
+  postAddressObtainRestaurants, getRestaurantById, putUpdateCartWithItem,
+  getCart, postCreatePaymentIntent, postConfirmPayment
+} = apiRoutes;
 
 function prepareRoutesForFetch(routes, urlResolver) {
   return Object.fromEntries(Array.from(Object.entries(routes), ([ k, v ]) => {

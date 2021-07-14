@@ -9,12 +9,14 @@ import {
 import { LoadingSpinner } from '../../elements/Loading';
 import './checkoutForm.scss';
 import { safelyExecuteSync } from '../../../shared/promises';
+import { e2eAssist } from '../../../testability';
 
 
 export function CheckoutForm() {
 
   const [ succeeded, setSucceeded ] = useState(false);
   const [ error, setError ] = useState(null);
+  const [ errors, setErrors ] = useState(null);
   const [ processing, setProcessing ] = useState('');
   const [ disabled, setDisabled ] = useState(true);
   const [ clientSecret, setClientSecret ] = useState('');
@@ -79,11 +81,16 @@ export function CheckoutForm() {
       }
     });
 
+    console.log(payload);
+    debugger;
+
     if (payload.error) {
       setError(`${ payload.error.message }`);
+      payload.errors ? setErrors(payload.errors) : setErrors(null);
       setProcessing(false);
     } else {
       setError(null);
+      setErrors(null);
       setProcessing(false);
       setSucceeded(true);
       dispatch(paymentSuccessful());
@@ -95,11 +102,12 @@ export function CheckoutForm() {
   }
 
   return (
-    <form id="payment-form" onSubmit={ handleSubmit }>
-      <CardElement id="card-element" options={ cardStyle } onChange={ handleChange } />
+    <form id="payment-form" onSubmit={ handleSubmit } { ...e2eAssist.FORM_PAYMENT }>
+      <CardElement id="card-element" options={ cardStyle } onChange={ handleChange } errors={ errors } />
       <button type="submit"
         disabled={ processing || disabled || succeeded }
         id="submit"
+        { ...e2eAssist.BTN_FORM_PAYMENT_SUBMIT }
       >
         <span id="button-text">
           { processing ? (
@@ -111,12 +119,12 @@ export function CheckoutForm() {
       </button>
       {/* Show any error that happens when processing the payment */ }
       { error && (
-        <div className="card-error text-danger my-2" role="alert">
+        <div className="card-error text-danger my-2" role="alert" { ...e2eAssist.TEXT_FORM_PAYMENT_ERRORS }>
           Payment failed: <strong>{ error }</strong>
         </div>
       ) }
       {/* Show a success message upon completion */ }
-      <p className={ succeeded ? 'result-message text-success my-2 font-weight-bold' : 'd-none' }>
+      <p className={ succeeded ? 'result-message text-success my-2 font-weight-bold' : 'd-none' } { ...e2eAssist.TEXT_FORM_PAYMENT_SUCCESS }>
         Payment succeeded!
       </p>
     </form>
