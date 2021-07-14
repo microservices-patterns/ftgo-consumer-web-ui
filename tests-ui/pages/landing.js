@@ -9,6 +9,7 @@ import {
   spinIcon,
   timeField
 } from './pageComponents';
+import { safelyExecuteAsync } from '../../src/shared/promises';
 
 export const landingPage = page => tagPageObject('landingPage', {
 
@@ -25,7 +26,9 @@ export const landingPage = page => tagPageObject('landingPage', {
   submitTheAddressAndTimeFormSuccessfully: async () => {
     await addressAndTimeFormSubmitButton(page).click();
     await addressAndTimeFormSubmitButton(page).expectDisabled();
-    await spinIcon(page).ensurePresent();
+    const [ err ] = await safelyExecuteAsync(spinIcon(page).ensurePresent({ timeout: 5000 }));
+
+    err && console.warn('[submitTheAddressAndTimeFormSuccessfully] Spinner was absent')
 
     await waitForTimeout(page, 300);
   }

@@ -40,6 +40,7 @@ export const selectors = defineTestIdDictionary((testId, testIdRest) => ({
 
   MODAL_PAYMENT: testId('modal', 'payment'),
   BTN_MODAL_PAYMENT_DISMISS_FN: testIdRest('button', 'dismiss payment modal'),
+  BTN_MODAL_PAYMENT_DISMISS_GENERAL: testId('button', 'dismiss payment modal'),
   BTN_MODAL_PAYMENT_DISMISS: testId('button', 'dismiss payment modal', 'dismiss'),
   BTN_MODAL_PAYMENT_CANCEL: testId('button', 'dismiss payment modal', 'cancel'),
 
@@ -49,12 +50,18 @@ export const selectors = defineTestIdDictionary((testId, testIdRest) => ({
   TEXT_FORM_PAYMENT_SUCCESS: testId('text', 'payment form success'),
 
   FLD_FORM_PAYMENT_FN: testIdRest('field', 'payment form'),
+  FLD_FORM_PAYMENT_CARD_NUMBER: testId('field', 'payment form', 'card_number'),
+  FLD_FORM_PAYMENT_EXP_MONTH: testId('field', 'payment form', 'exp_month'),
+  FLD_FORM_PAYMENT_EXP_YEAR: testId('field', 'payment form', 'exp_year'),
+  FLD_FORM_PAYMENT_CVV: testId('field', 'payment form', 'cvv'),
+  FLD_FORM_PAYMENT_ZIP: testId('field', 'payment form', 'zip'),
 
   BTN_INVOKE_PAYMENT_MODAL: testId('button', 'invoke payment modal'),
   BTN_CHECKOUT_MODIFY_CART: testId('button', 'modify cart', 'checkout page'),
+  BTN_CHECKOUT_REMOVE_ITEM: testId('button', 'remove item', 'checkout page'),
   BTN_CHECKOUT_REMOVE_ITEM_FN: testIdRest('button', 'remove item', 'checkout page'),
 
+  CARD_CHECKOUT_ITEM: testId('card', 'item', 'checkout page'),
   CARD_CHECKOUT_ITEM_FN: testIdRest('card', 'item', 'checkout page'),
-
 
 }));

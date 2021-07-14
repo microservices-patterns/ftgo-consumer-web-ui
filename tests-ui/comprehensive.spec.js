@@ -69,7 +69,7 @@ describe('Interaction with the entire FTGO UI application:', () => {
 
   afterAll(() => {
     summarizePageObject(true);
-  })
+  });
 
   describe('00. Ground-zero tests. Browser capabilities', () => {
 
@@ -91,7 +91,7 @@ describe('Interaction with the entire FTGO UI application:', () => {
     });
   });
 
-  describe(`10. Landing Page -> Restaurants List -> Menu Page`, () => {
+  describe(`[Landing Page] -> Restaurants List -> Menu Page`, () => {
 
     test(`Navigation to Landing`, async () => {
       await navigation(page).visitTheSite();
@@ -119,6 +119,22 @@ describe('Interaction with the entire FTGO UI application:', () => {
       await restaurantMenuPage(page).proceedToCheckout();
 
       await checkoutPage(page).expectVisitingSelf();
+    });
+
+    describe(`[checkout page]`, () => {
+
+      test(`[required elements before payment]`, async () => {
+        await checkoutPage(page, expect).expectCartNotEmptyAndReadyToPay();
+      });
+
+      test(`[payment modal interaction]`, async () => {
+        await checkoutPage(page, expect).playWithThePaymentModal();
+      });
+
+      test(`[payment form interaction]`, async () => {
+        await checkoutPage(page, expect).playWithThePaymentFormRequireds();
+      });
+
     });
 
   });

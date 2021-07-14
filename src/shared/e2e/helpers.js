@@ -139,6 +139,10 @@ export class CssSel {
     return new CssSel(val, this, '');
   }
 
+  not(sel) {
+    return new CssSel('', this, '').mod(`:not(${ sel })`)
+  }
+
   /**
    *
    * @param { string } attrName
@@ -153,6 +157,7 @@ export class CssSel {
     if (attrCf == null) {
       return new CssSel(`[${ attrName }="${ String(attrValue).replace('"', '\\"') }"]`, this, '');
     }
+    return new CssSel(`[${ attrName }${ attrCf }="${ String(attrValue).replace('"', '\\"') }"]`, this, '');
   }
 
   or(val) {

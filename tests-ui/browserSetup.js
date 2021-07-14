@@ -33,8 +33,8 @@ export function setUpBrowserAndPage(testLifecycleHooks, context, viewport, setPa
         '--disable-features=site-per-process',
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
-        '--disable-web-security',
-        '--user-data-dir=~/.'
+//        '--disable-web-security',
+//        '--user-data-dir=~/.'
       ]
     })));
     if (launchErr || !browser) {

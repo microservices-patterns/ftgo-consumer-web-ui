@@ -1,10 +1,160 @@
 import { tagPageObject } from './utilities';
-import { waitForSelector } from '../puppeteerExtensions';
+import { waitForSelector, waitForTimeout } from '../puppeteerExtensions';
 import { SEL } from '../selectors';
+import { element, textField } from '../helpers';
+import { safelyExecuteAsync } from '../../src/shared/promises';
 
+const cartItem = page => element(page, SEL.CARD_CHECKOUT_ITEM);
+const payButtonWhichInvokesModal = page => element(page, SEL.BTN_INVOKE_PAYMENT_MODAL);
+const editCartButton = page => element(page, SEL.BTN_CHECKOUT_MODIFY_CART);
+const removeItemFormCartButton = page => element(page, SEL.BTN_CHECKOUT_REMOVE_ITEM);
+const removeItemFormCartByItemButton = (page, itemName) => element(page, SEL.BTN_CHECKOUT_REMOVE_ITEM_FN(itemName));
+const paymentModal = page => element(page, SEL.MODAL_PAYMENT);
+const paymentForm = page => element(page, SEL.FORM_PAYMENT);
+const paymentFormSubmitButton = page => element(page, SEL.BTN_FORM_PAYMENT_SUBMIT);
+const paymentModalDismissButton = page => element(page, SEL.BTN_MODAL_PAYMENT_DISMISS_GENERAL);
+const paymentModalDismissButtonAfterSuccessfulPayment = page => element(page, SEL.BTN_MODAL_PAYMENT_DISMISS);
+const paymentModalDismissButtonBeforeSuccessfulPayment = (page) => element(page, SEL.BTN_MODAL_PAYMENT_CANCEL);
 
-export const checkoutPage = page => tagPageObject('checkoutPage', {
+const textErrors = page => element(page, SEL.TEXT_FORM_PAYMENT_ERRORS);
+const textSuccess = page => element(page, SEL.TEXT_FORM_PAYMENT_ERRORS);
+
+const inpCardNumber = page => textField(page, SEL.FLD_FORM_PAYMENT_CARD_NUMBER);
+const inpExpMonth = page => textField(page, SEL.FLD_FORM_PAYMENT_EXP_MONTH);
+const inpExpYear = page => textField(page, SEL.FLD_FORM_PAYMENT_EXP_YEAR);
+const inpCvv = page => textField(page, SEL.FLD_FORM_PAYMENT_CVV);
+const inpZip = page => textField(page, SEL.FLD_FORM_PAYMENT_ZIP);
+
+export const checkoutPage = (page, expect) => tagPageObject('checkoutPage', {
 
   expectVisitingSelf: () => waitForSelector(page, SEL.PAGE_CHECKOUT),
 
+  justWaitABit: () => waitForTimeout(page, 1000),
+
+  expectCartNotEmptyAndReadyToPay: async () => {
+    const cartItemsCount = await cartItem(page).count();
+    expect && expect(cartItemsCount).toBeGreaterThanOrEqual(1);
+  },
+
+  bringUpThePaymentModal: async () => {
+    const isNotPresent = await paymentModal(page).expectAbsent();
+    if (isNotPresent) {
+      await payButtonWhichInvokesModal(page).ensurePresent();
+      await payButtonWhichInvokesModal(page).click();
+    }
+
+    await paymentModal(page).ensurePresent();
+  },
+
+  dismissThePaymentModal: async () => {
+    const isPresent = !await paymentModal(page).expectAbsent();
+    if (isPresent) {
+      await paymentModalDismissButton(page).ensurePresent();
+      await paymentModalDismissButton(page).click();
+    }
+
+    await paymentModalDismissButton(page).expectAbsent();
+
+    const isAbsent = await paymentModal(page).expectAbsent();
+    expect && expect(isAbsent).toEqual(true);
+
+    await paymentModalDismissButton(page).expectAbsent();
+
+  },
+
+  playWithThePaymentModal: async () => {
+
+    await paymentModal(page).expectAbsent();
+    await paymentModalDismissButton(page).expectAbsent();
+
+    await payButtonWhichInvokesModal(page).ensurePresent();
+    await payButtonWhichInvokesModal(page).click();
+
+    await paymentModal(page).ensurePresent();
+    await paymentModalDismissButton(page).ensurePresent();
+    await paymentModalDismissButtonBeforeSuccessfulPayment(page).ensurePresent();
+    await paymentModalDismissButtonAfterSuccessfulPayment(page).expectAbsent();
+
+    await paymentModalDismissButton(page).click();
+
+    await paymentModal(page).expectAbsent();
+    await paymentModalDismissButton(page).expectAbsent();
+
+  },
+
+  playWithThePaymentFormRequireds: async () => {
+    await checkoutPage(page, expect).bringUpThePaymentModal();
+
+    await paymentFormComponent(page, expect).tryAndTypeNothing();
+    await paymentFormComponent(page, expect).wrongCCNumber();
+    await paymentFormComponent(page, expect).correctCCNumberBlankExpiration();
+    await paymentFormComponent(page, expect).correctCCNumberExpiredDateExpiration();
+
+    await checkoutPage(page, expect).dismissThePaymentModal();
+  },
+
+  submitPaymentForm: async () => {
+    await paymentFormSubmitButton(page).ensurePresent();
+    await paymentFormSubmitButton(page).expectNotDisabled();
+    await paymentFormSubmitButton(page).click();
+    await paymentFormSubmitButton(page).has(SEL.ICON_SPIN);
+    const [ err ] = await safelyExecuteAsync(paymentFormSubmitButton(page).expectDisabled({ timeout: 5000 }));
+    if (err) {
+      console.warn('[submitPaymentForm] paymentFormSubmitButton wasn\'t disabled as expected');
+    }
+    await paymentFormSubmitButton(page).expectNotDisabled();
+  },
+
+});
+
+
+export const paymentFormComponent = (page, expect) => tagPageObject('paymentFormComponent', {
+  tryAndTypeNothing: async () => {
+    // 1.
+    await paymentForm(page).ensurePresent();
+    await checkoutPage(page, expect).justWaitABit(); // nothing
+    await paymentFormSubmitButton(page).ensurePresent();
+    await paymentFormSubmitButton(page).expectDisabled();
+    // 1. pass
+  },
+  wrongCCNumber: async () => {
+    // 2. wrong CC number
+    await inpCardNumber(page).ensurePresent();
+    await inpCardNumber(page).enter('123');
+    await checkoutPage(page, expect).submitPaymentForm();
+    await textSuccess(page).expectAbsent();
+    await textErrors(page).ensurePresent();
+    await inpCardNumber(page).expectInvalid();
+    // 2. pass
+  },
+  correctCCNumberBlankExpiration: async () => {
+    // 3. correct CC number, blank expiration
+    await inpCardNumber(page).ensurePresent();
+    await inpCardNumber(page).enter('4000 0000 0000 9995', true);
+    await checkoutPage(page, expect).submitPaymentForm();
+
+    // error, expiration required
+    await textSuccess(page).expectAbsent();
+    await textErrors(page).ensurePresent();
+    await inpCardNumber(page).expectNotInvalid();
+    await inpExpMonth(page).expectInvalid();
+    await inpExpYear(page).expectInvalid();
+    // 3. pass
+  },
+  correctCCNumberExpiredDateExpiration: async () => {
+    // 4. correct CC number, filled expiration, expired
+    await inpCardNumber(page).ensurePresent();
+    await inpCardNumber(page).enter('4000 0000 0000 9995', true);
+    await inpExpMonth(page).enter('10', true);
+    await inpExpYear(page).enter('10', true);
+    await checkoutPage(page, expect).submitPaymentForm();
+
+    // error, expired
+    await textSuccess(page).expectAbsent();
+    await textErrors(page).ensurePresent();
+    await inpCardNumber(page).expectNotInvalid();
+    await inpExpMonth(page).expectInvalid();
+    await inpExpYear(page).expectInvalid();
+    // 4. pass
+  },
 });
