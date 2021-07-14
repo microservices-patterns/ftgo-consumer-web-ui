@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "PORT=8080 nodemon -w src --exec \"babel-node src\"",
     "build": "$(npm bin)/babel src -s -D -d dist",
-    "start": "PORT=8080 node --experimental-modules -r esm dist",
-    "prestart": "npm run build",
+    "start": "PORT=8080 node -r esm dist",
+    "prestart": "npm run -s build",
     "test": "eslint src"
   },
   "repository": "developit/express-es6-rest-api",

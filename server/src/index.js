@@ -8,8 +8,6 @@ import middleware from './middleware';
 import api from './api';
 import config from './config.json';
 
-console.log('[process.env.STRIPE_SK_KEY]', process.env.STRIPE_SK_KEY);
-
 let app = express();
 app.server = http.createServer(app);
 
