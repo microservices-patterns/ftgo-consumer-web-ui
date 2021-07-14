@@ -135,6 +135,18 @@ describe('Interaction with the entire FTGO UI application:', () => {
         await checkoutPage(page, expect).playWithThePaymentFormRequireds();
       });
 
+      test(`[payment form] declined payment`, async () => {
+
+        await checkoutPage(page, expect).attemptDeclinedCard();
+
+      });
+
+      test(`[payment form] accepted payment`, async () => {
+
+        await checkoutPage(page, expect).attemptValidOkCard();
+
+      });
+
     });
 
   });

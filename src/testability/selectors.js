@@ -37,6 +37,7 @@ export const selectors = defineTestIdDictionary((testId, testIdRest) => ({
   INFO_CART_VALUE_OF: testIdRest('text', 'cart subtotal'),
 
   PAGE_CHECKOUT: testId('page', 'checkout'),
+  PAGE_THANKYOU: testId('page', 'thank you'),
 
   MODAL_PAYMENT: testId('modal', 'payment'),
   BTN_MODAL_PAYMENT_DISMISS_FN: testIdRest('button', 'dismiss payment modal'),
