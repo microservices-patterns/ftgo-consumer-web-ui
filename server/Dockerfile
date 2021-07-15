@@ -5,6 +5,7 @@ RUN npx envinfo > ./envinfo.log
 RUN cat ./envinfo.log
 
 # Install app dependencies
+COPY babel.config.js .
 COPY package.json .
 COPY package-lock.json .
 RUN npm ci
@@ -12,7 +13,7 @@ RUN npm ci
 # Copy app source
 #COPY . /www
 ADD src ./src
-ADD babel.config.js .
 ENV PORT=8080
 EXPOSE 8080
-CMD npm run build && npm run start
+RUN npm run build
+CMD npx envinfo && npm run start
