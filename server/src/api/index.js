@@ -1,4 +1,4 @@
-import { version } from '../../package.json';
+//import { version } from '../../package.json';
 import { Router } from 'express';
 import addresses from './address';
 import restaurants from './restaurant';
@@ -19,7 +19,7 @@ const defaultExport = ({ config, db }) => {
 
   // perhaps expose some API metadata at the root
   api.get('/', (req, res) => {
-    res.json({ version });
+    res.json({ version: '1.0.0' });
   });
 
   return api;

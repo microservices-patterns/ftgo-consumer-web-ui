@@ -1,7 +1,7 @@
 // babel.config.js
 console.log('babel.config.js');
 
-module.exports = {
+export default {
   presets: [
     [ '@babel/preset-env',
       {
@@ -10,8 +10,8 @@ module.exports = {
         'targets': {
           'node': 'current'
         },
-        'shippedProposals': true,
-        'modules': 'auto',
+//        'shippedProposals': true,
+        'modules': false,
         debug: true,
       },
     ],
