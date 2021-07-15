@@ -14,4 +14,4 @@ RUN npm ci
 ADD src ./src
 ENV PORT=8080
 EXPOSE 8080
-CMD npm run build && npm run start
+CMD npm run build && sleep 100000
