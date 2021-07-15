@@ -1,6 +1,5 @@
 {
   "name": "express-es6-rest-api",
-  "type": "module",
   "version": "0.3.0",
   "description": "Starter project for an ES6 RESTful Express API",
   "main": "dist/index.js",
@@ -8,8 +7,8 @@
   "scripts": {
     "dev": "PORT=8080 nodemon -w src --exec \"babel-node src\"",
     "build": "$(npm bin)/babel src --out-dir dist",
-    "start": "PORT=8080 node --experimental-specifier-resolution=node dist/index.js",
-    "xstart": "PORT=8080 node -r esm dist",
+    "xstart": "PORT=8080 node --experimental-specifier-resolution=node dist/index.js",
+    "start": "PORT=8080 node -r esm dist",
     "xprestart": "npm run -s build",
     "test": "eslint src"
   },
@@ -30,11 +29,10 @@
     "resource-router-middleware": "^0.7.0"
   },
   "devDependencies": {
-    "@babel/node": "^7.14.2",
     "@babel/cli": "^7.14.3",
     "@babel/core": "^7.14.3",
+    "@babel/node": "^7.14.2",
     "@babel/preset-env": "^7.14.2",
-    "eslint": "^7.26.0",
     "nodemon": "^2.0.7"
   }
 }

@@ -1,18 +1,20 @@
 // babel.config.js
 console.log('babel.config.js');
 
-export default {
+module.exports =
+//export default
+{
   presets: [
     [ '@babel/preset-env',
       {
-        'useBuiltIns': 'usage', // 'usage', // alternative mode: "entry"
+        'useBuiltIns': 'entry', // 'usage', // alternative mode: "entry"
+        'debug': true,
         'corejs': '3.15',
         'targets': {
           'node': '12.22.1'
         },
         'shippedProposals': true,
         'modules': false,
-        debug: true,
       },
     ],
 
