@@ -113,10 +113,12 @@ export const checkoutPage = (page, expect) => tagPageObject('checkoutPage', {
     await paymentFormSubmitButton(page).ensurePresent();
     await paymentFormSubmitButton(page).expectNotDisabled();
     await paymentFormSubmitButton(page).click();
-    await paymentFormSubmitButton(page).has(SEL.ICON_SPIN);
-    const [ err ] = await safelyExecuteAsync(paymentFormSubmitButton(page).expectDisabled({ timeout: 5000 }));
+    const [ err ] = await safelyExecuteAsync((async () => {
+      await paymentFormSubmitButton(page).has(SEL.ICON_SPIN);
+      await paymentFormSubmitButton(page).expectDisabled({ timeout: 5000 });
+    })());
     if (err) {
-      console.warn('[submitPaymentForm] paymentFormSubmitButton wasn\'t disabled as expected');
+      console.warn('[submitPaymentForm] paymentFormSubmitButton wasn\'t disabled as expected. Possibly the server request was too quick');
     }
     if (ignoreSubmitDisabled) {
       return;
