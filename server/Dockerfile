@@ -12,6 +12,7 @@ RUN npm ci
 # Copy app source
 #COPY . /www
 ADD src ./src
+ADD babel.config.js .
 ENV PORT=8080
 EXPOSE 8080
-CMD npm run build && sleep 100000
+CMD npm run build && npm run start
