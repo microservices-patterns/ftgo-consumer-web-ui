@@ -11,23 +11,23 @@ module.exports = {
           'node': 'current'
         },
         'shippedProposals': true,
-        'modules': 'commonjs',
+        'modules': 'auto',
         debug: true,
       },
     ],
 
   ],
-  plugins: [
-    // https://babeljs.io/docs/en/babel-plugin-transform-runtime#docsNav
-    [
-      '@babel/plugin-transform-runtime',
-      {
-        'regenerator': true,
-      }
-    ],
-    '@babel/plugin-transform-modules-commonjs',
-    '@babel/plugin-proposal-export-namespace-from',
-    '@babel/plugin-proposal-class-properties',
-    //    '@babel/plugin-syntax-jsx'
-  ]
+//  plugins: [
+//    // https://babeljs.io/docs/en/babel-plugin-transform-runtime#docsNav
+//    [
+//      '@babel/plugin-transform-runtime',
+//      {
+//        'regenerator': true,
+//      }
+//    ],
+////    '@babel/plugin-transform-modules-commonjs',
+//    '@babel/plugin-proposal-export-namespace-from',
+//    '@babel/plugin-proposal-class-properties',
+//    //    '@babel/plugin-syntax-jsx'
+//  ]
 };
