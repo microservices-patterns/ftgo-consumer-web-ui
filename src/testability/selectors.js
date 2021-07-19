@@ -65,4 +65,7 @@ export const selectors = defineTestIdDictionary((testId, testIdRest) => ({
   CARD_CHECKOUT_ITEM: testId('card', 'item', 'checkout page'),
   CARD_CHECKOUT_ITEM_FN: testIdRest('card', 'item', 'checkout page'),
 
+  TEXT_ORDER_ID_FN: testIdRest('text', 'orderId'),
+  TEXT_ORDER_ID: testId('text', 'orderId')
+
 }));

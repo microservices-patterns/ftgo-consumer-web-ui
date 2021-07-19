@@ -4,7 +4,8 @@ import {
   accessCart,
   accessCartItems,
   accessCartStatus,
-  accessPaymentSuccessful
+  accessPaymentSuccessful,
+  accessVerboseCartInfo
 } from '../../../features/cart/cartSlice';
 import {
   navigateToEditDeliveryAddress,
@@ -20,6 +21,7 @@ import { SelectedRestaurantRow } from '../../components/SelectedRestaurantRow';
 import { YourTrayItems } from '../RestaurantPage/yourTrayItems';
 import { OrderInfo } from './orderInfo';
 import { PaymentModal } from './paymentModal';
+import { accessIsLoading } from '../../../features/ui/loadingSlice';
 
 
 const CheckoutPage = () => {
@@ -28,9 +30,19 @@ const CheckoutPage = () => {
   const cartItems = useSelector(accessCartItems());
   const cartId = useSelector(accessCart('id'));
   const selectedRestaurantId = useSelector(accessSelectedRestaurantId());
+  const verboseCartInfo = useSelector(accessVerboseCartInfo());
   const recentPaymentSuccess = useSelector(accessPaymentSuccessful());
+  const isLoading = useSelector(accessIsLoading());
 
-  void cartItems;
+  useEffect(() => {
+    if (!selectedRestaurantId) {
+      return;
+    }
+    if (cartItems.length) {
+      return;
+    }
+    dispatch(navigateToEditMenu(selectedRestaurantId));
+  }, [ cartItems.length, dispatch, selectedRestaurantId ]);
 
   useEffect(() => {
     if (!selectedRestaurantId) {
@@ -120,8 +132,8 @@ const CheckoutPage = () => {
         </Col>
       </Row>
       <Row>
-        <Col className="text-right pt-4" md={ 10 }><Button onClick={ handleRequestPayment } color="primary"
-          { ...e2eAssist.BTN_INVOKE_PAYMENT_MODAL }>Pay</Button></Col>
+        <Col className="text-right pt-4" md={ 10 }><Button onClick={ isLoading ? null : handleRequestPayment } disabled={ isLoading } color="primary"
+          { ...e2eAssist.BTN_INVOKE_PAYMENT_MODAL }>Pay { String(verboseCartInfo.total ?? '') }</Button></Col>
       </Row>
 
     </Container>

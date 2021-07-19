@@ -14,7 +14,7 @@ module.exports =
           'node': '12.22.1'
         },
         'shippedProposals': true,
-        'modules': false,
+        'modules': 'auto',
       },
     ],
 

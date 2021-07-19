@@ -1,5 +1,6 @@
 import resource from 'resource-router-middleware';
 import restaurants from '../models/address';
+import { cache } from './cache';
 
 const addressResource = ({ config, db }) => resource({
 
@@ -33,6 +34,7 @@ const addressResource = ({ config, db }) => resource({
         ...(/0$/.test(time) ? [] : (/[68]$/.test(time) ? restaurants : restaurants.slice(0, 2)))
       ];
 
+      cache.del('cart');
       body.restaurants = result;
       res.json(body);
       return;

@@ -13,12 +13,31 @@ Object.assign(forTimeout, {
   MIN: MSEC_IN_MIN
 });
 
-
+/**
+ *
+ * @param promise
+ * @returns {Promise<*[]|*[]>}
+ */
 export async function safelyExecuteAsync(promise) {
   try {
     return [ null, await promise ];
   } catch (ex) {
     return [ ex ];
+  }
+}
+
+/**
+ *
+ * @param asyncFn
+ * @returns {(function(...[*]): Promise<[null, *]|[*]|undefined>)|*}
+ */
+export function makeSafelyRunAsyncFn(asyncFn) {
+  return async (...args) => {
+    try {
+      return [ null, await asyncFn(...args) ];
+    } catch (ex) {
+      return [ ex ];
+    }
   }
 }
 

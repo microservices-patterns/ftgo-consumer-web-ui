@@ -1,11 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { accessMenuForRestaurant, accessRestaurantMenuState } from '../../../features/restaurants/restaurantsSlice';
-import {
-  accessCart,
-  accessCartItems,
-  accessCartStatus,
-  obtainCartAsyncThunk
-} from '../../../features/cart/cartSlice';
+import { accessCart, accessCartItems, obtainCartAsyncThunk } from '../../../features/cart/cartSlice';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { retrieveRestaurantByIdAsyncThunk } from '../../../features/address/addressSlice';
 import { createMap, useUpdateCartHandler } from './hooks';
@@ -50,8 +45,7 @@ export function MenuItems({ restaurantId }) {
   const dataSource = useMemo(() => menuList.map(item => cartItemsMap.has(item.id) ?
     Object.assign({ cart: cartItemsMap.get(item.id) }, item) :
     item), [ cartItemsMap, menuList ]);
-  const cartId = useSelector(accessCart('id'));
-  const cartStatus = useSelector(accessCartStatus());
+  const orderId = useSelector(accessCart('orderId'));
 
   useEffect(() => {
     if (menuState) {
@@ -61,22 +55,22 @@ export function MenuItems({ restaurantId }) {
   }, [ dispatch, menuState, restaurantId ]);
 
   useEffect(() => {
-    if (cartStatus) {
+    if (orderId) {
       return;
     }
     dispatch(obtainCartAsyncThunk());
-  }, [ cartStatus, dispatch ]);
+  }, [ orderId, dispatch ]);
 
 
-  const handleAddToCart = useUpdateCartHandler(cartId, cartItemsMap, restaurantId);
+  const handleAddToCart = useUpdateCartHandler(orderId, cartItemsMap, restaurantId);
 
-  const actionColumnFormatter = useCallback((cellContent, row, rowId, cartId) => {
+  const actionColumnFormatter = useCallback((cellContent, row, rowId, orderId) => {
     if (row.cart) {
       const cartItem = row.cart;
-      return <Button color={ 'success' } size={ 'sm' } disabled={ !cartId || (cartItem.oldCount !== undefined) }
+      return <Button color={ 'success' } size={ 'sm' } disabled={ !orderId || (cartItem.oldCount !== undefined) }
         onClick={ handleAddToCart(row.id, row, cartItem, 1) } { ...e2eAssist.BTN_ADD_TO_CART_ADDED }><IconPlus /></Button>;
     }
-    return <Button color={ 'info' } size={ 'sm' } disabled={ !cartId }
+    return <Button color={ 'info' } size={ 'sm' } disabled={ !orderId }
       onClick={ handleAddToCart(row.id, row, null, 1) } { ...e2eAssist.BTN_ADD_TO_CART_FRESH }><IconCartPlus /></Button>;
   }, [ handleAddToCart ]);
 
@@ -102,18 +96,18 @@ export function MenuItems({ restaurantId }) {
       isDummyField: true,
       text: 'Add To Cart',
       formatter: actionColumnFormatter,
-      formatExtraData: cartId,
+      formatExtraData: orderId,
       classes: 'text-right'
     }
-  ]), [ actionColumnFormatter, cartId ]);
+  ]), [ actionColumnFormatter, orderId ]);
 
   const defaultSorted = [ {
     dataField: 'name',
     order: 'desc'
   } ];
 
-  const prevcartId = usePrevious(cartId);
-  console.log(prevcartId, ' => ', cartId);
+  const prevcartId = usePrevious(orderId);
+  console.log(prevcartId, ' => ', orderId);
 
   if (menuState !== 'ready') {
     return <>Updating the menu...</>;

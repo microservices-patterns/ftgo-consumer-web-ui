@@ -1,8 +1,14 @@
 import { paymentIntentFakeStripeResponse } from './paymentIntentResponse';
+import { cache } from './cache';
+import { updateCartWithStats } from './cart';
 
+// left this here intentionally
+// ```js
 //import stripeDefault from 'stripe';
-
 //const stripe = stripeDefault(process.env.STRIPE_SK_KEY);
+// ```
+
+const aGeneralCCCardNumberPattern = /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
 
 const paymentIntent = paymentIntentFakeStripeResponse;
 
@@ -10,10 +16,12 @@ export const postPaymentIntentHandler = (req, res) => {
   const { items } = req.body;
 
   // Create a PaymentIntent with the order amount and currency
+  // ```js
   //		await stripe.paymentIntents.create({
   //			amount: calculateOrderAmount(items),
   //			currency: "usd"
   //		});
+  // ```
 
   console.log('[paymentIntent]', paymentIntent);
 
@@ -45,8 +53,6 @@ export const postPaymentConfirmHandler = (req, res) => {
     console.log('payment intent client secret mismatch');
     return res.status(400).json({ error: { message: 'payment intent client secret mismatch' } });
   }
-
-  const aGeneralCCCardNumberPattern = /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
 
   if (!aGeneralCCCardNumberPattern.test(card?.card_number ?? '')) {
     return res.status(400).json({ error: { message: 'Invalid card number' }, errors: { card_number: 'Invalid' } });
@@ -81,8 +87,7 @@ export const postPaymentConfirmHandler = (req, res) => {
   // 4000 0000 0000 9995 - Payment is declined
 
   if (/^4242\s*4242\s*4242\s*4242$/.test(card?.card_number ?? '')) {
-    return res.status(200).json({ success: true });
-
+    return respondWithSuccessfulPayment(res);
   } else if (/^4000\s*0025\s*0000\s*3155$/.test(card?.card_number ?? '')) {
     const isOdd = (new Date().getTime() % 2) === 0;
     return setTimeout(() => {
@@ -92,7 +97,7 @@ export const postPaymentConfirmHandler = (req, res) => {
           errors: { card_number: 'Bank requested authentication.' }
         }).status(400);
       } else {
-        return res.status(200).json({ success: true });
+        return respondWithSuccessfulPayment(res);
       }
     }, 3500);
   } else if (/^4000\s*0000\s*0000\s*9995$/.test(card?.card_number ?? '')) {
@@ -100,12 +105,18 @@ export const postPaymentConfirmHandler = (req, res) => {
       return res.status(400).json({ error: { message: 'Payment is declined' } });
     }, 2000);
   } else {
-    return setTimeout(() => {
-      return res.status(200).json({ success: true });
-    }, 1000);
+    return respondWithSuccessfulPayment(res);
   }
 
 };
+
+function respondWithSuccessfulPayment(res) {
+  cache.del('cart');
+
+  return setTimeout(() => {
+    return res.status(200).json({ success: true });
+  }, 1000);
+}
 
 
 function safelyDestructure(source, destructor) {
@@ -118,9 +129,11 @@ function safelyDestructure(source, destructor) {
 
 
 const calculateOrderAmount = items => {
+  const cart = updateCartWithStats({ items });
+  const { total } = cart;
   // Replace this constant with a calculation of the order's amount
   // Calculate the order total on the server to prevent
   // people from directly manipulating the amount on the client
-  console.log(`[calculateOrderAmount]`, JSON.stringify(items, null, 2));
-  return 1400;
+  console.log(`[calculateOrderAmount]`, JSON.stringify(cart, null, 2));
+  return total;
 };

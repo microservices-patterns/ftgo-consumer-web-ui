@@ -13,8 +13,8 @@ const apiRoutes = prepareRoutesForFetch({
   getRestaurantById: restaurantId => `/restaurants/${ restaurantId }`,
   getCart: `GET /cart`,
   putUpdateCartWithItem: [
-    (cartId, restaurantId, itemId, quantity) => `PUT /cart/${ cartId }`,
-    (cartId, restaurantId, itemId, quantity) => ({ cartId, restaurantId, itemId, quantity })
+    `PUT /cart/0`,
+    (restaurantId, itemId, quantity) => ({ restaurantId, itemId, quantity })
   ],
   postCreatePaymentIntent: [
     `POST /payment/intent`,

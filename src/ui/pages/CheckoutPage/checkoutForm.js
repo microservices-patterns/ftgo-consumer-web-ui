@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { CardElement, useElements, useStripe } from './cardElement';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  accessCartItems,
+  accessCartItems, accessVerboseCartInfo,
   paymentSuccessful,
   postCreatePaymentIntentAsyncThunk
 } from '../../../features/cart/cartSlice';
@@ -24,6 +24,7 @@ export function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
   const cartItems = useSelector(accessCartItems());
+  const verboseCartInfo = useSelector(accessVerboseCartInfo());
 
   const dispatch = useDispatch();
   const handleCreatePaymentIntent = useCallback(async (items) => {
@@ -113,7 +114,7 @@ export function CheckoutForm() {
           { processing ? (
             <LoadingSpinner />
           ) : (
-            'Pay now'
+            'Pay now ' + String(verboseCartInfo.total ?? '')
           ) }
         </span>
       </button>

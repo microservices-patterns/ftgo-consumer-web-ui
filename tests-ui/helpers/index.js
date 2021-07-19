@@ -3,6 +3,7 @@
 //await waitClickAndType(page, SEL.FORM_FIELD_ADDRESS, testData.address);
 //await waitForTimeout(page, 10);
 import {
+  readElementsText,
   waitClickAndType,
   waitForSelector,
   waitForSelectorAndClick,
@@ -10,6 +11,7 @@ import {
   waitForTimeout
 } from '../puppeteerExtensions';
 import { cssSel } from '../../src/shared/e2e';
+import { safelyExecuteAsync } from '../../src/shared/promises';
 
 export const textField = (page, sel) => {
   return {
@@ -47,10 +49,14 @@ export const element = (page, sel) => {
       return waitForSelector(page, cssSel(sel).mod(':not([disabled])'));
     },
     async count() {
+      console.log(`[Element.count]for selector: "${ String(sel) }"`);
       return (await page.$$(String(sel))).length;
     },
     has(childSel) {
       return waitForSelector(page, cssSel(sel).desc(childSel));
+    },
+    safelyGetText() {
+      return safelyExecuteAsync(readElementsText(page, sel));
     }
   };
 };

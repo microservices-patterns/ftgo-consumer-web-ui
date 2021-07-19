@@ -2,13 +2,14 @@ import { tagPageObject } from './utilities';
 import { waitForSelector, waitForTimeout } from '../puppeteerExtensions';
 import { SEL } from '../selectors';
 import { element, textField } from '../helpers';
-import { safelyExecuteAsync } from '../../src/shared/promises';
+import { makeSafelyRunAsyncFn } from '../../src/shared/promises';
+import { thankYouPage } from './thankYou';
 
 const cartItem = page => element(page, SEL.CARD_CHECKOUT_ITEM);
 const payButtonWhichInvokesModal = page => element(page, SEL.BTN_INVOKE_PAYMENT_MODAL);
-const editCartButton = page => element(page, SEL.BTN_CHECKOUT_MODIFY_CART);
-const removeItemFormCartButton = page => element(page, SEL.BTN_CHECKOUT_REMOVE_ITEM);
-const removeItemFormCartByItemButton = (page, itemName) => element(page, SEL.BTN_CHECKOUT_REMOVE_ITEM_FN(itemName));
+//const editCartButton = page => element(page, SEL.BTN_CHECKOUT_MODIFY_CART);
+//const removeItemFormCartButton = page => element(page, SEL.BTN_CHECKOUT_REMOVE_ITEM);
+//const removeItemFormCartByItemButton = (page, itemName) => element(page, SEL.BTN_CHECKOUT_REMOVE_ITEM_FN(itemName));
 const paymentModal = page => element(page, SEL.MODAL_PAYMENT);
 const paymentForm = page => element(page, SEL.FORM_PAYMENT);
 const paymentFormSubmitButton = page => element(page, SEL.BTN_FORM_PAYMENT_SUBMIT);
@@ -25,8 +26,6 @@ const inpExpYear = page => textField(page, SEL.FLD_FORM_PAYMENT_EXP_YEAR);
 const inpCvv = page => textField(page, SEL.FLD_FORM_PAYMENT_CVV);
 const inpZip = page => textField(page, SEL.FLD_FORM_PAYMENT_ZIP);
 
-const thankYouPage = page => element(page, SEL.PAGE_THANKYOU);
-
 export const checkoutPage = (page, expect) => tagPageObject('checkoutPage', {
 
   expectVisitingSelf: () => waitForSelector(page, SEL.PAGE_CHECKOUT),
@@ -35,6 +34,7 @@ export const checkoutPage = (page, expect) => tagPageObject('checkoutPage', {
 
   expectCartNotEmptyAndReadyToPay: async () => {
     const cartItemsCount = await cartItem(page).count();
+    console.log(`[cartItemsCount]`, cartItemsCount);
     expect && expect(cartItemsCount).toBeGreaterThanOrEqual(1);
   },
 
@@ -106,17 +106,17 @@ export const checkoutPage = (page, expect) => tagPageObject('checkoutPage', {
     await checkoutPage(page, expect).bringUpThePaymentModal();
     await paymentFormComponent(page, expect).correctAcceptedCard();
 
-    await thankYouPage(page).ensurePresent();
+    await thankYouPage(page, expect).expectVisitingSelf();
   },
 
   submitPaymentForm: async (ignoreSubmitDisabled) => {
     await paymentFormSubmitButton(page).ensurePresent();
     await paymentFormSubmitButton(page).expectNotDisabled();
     await paymentFormSubmitButton(page).click();
-    const [ err ] = await safelyExecuteAsync((async () => {
+    const [ err ] = await makeSafelyRunAsyncFn(async () => {
       await paymentFormSubmitButton(page).has(SEL.ICON_SPIN);
       await paymentFormSubmitButton(page).expectDisabled({ timeout: 5000 });
-    })());
+    })();
     if (err) {
       console.warn('[submitPaymentForm] paymentFormSubmitButton wasn\'t disabled as expected. Possibly the server request was too quick');
     }
@@ -161,11 +161,8 @@ export const paymentFormComponent = (page, expect) => tagPageObject('paymentForm
     await checkoutPage(page, expect).submitPaymentForm();
 
     // error, expiration required
-    await textSuccess(page).expectAbsent();
-    await textErrors(page).ensurePresent();
-    await inpCardNumber(page).expectNotInvalid();
-    await inpExpMonth(page).expectInvalid();
-    await inpExpYear(page).expectInvalid();
+    await paymentFormComponent(page, expect).expectCardNumberCorrectExpirationInvalid();
+
     // 3. pass
   },
   correctCCNumberExpiredDateExpiration: async () => {
@@ -177,12 +174,16 @@ export const paymentFormComponent = (page, expect) => tagPageObject('paymentForm
     await checkoutPage(page, expect).submitPaymentForm();
 
     // error, expired
+    await paymentFormComponent(page, expect).expectCardNumberCorrectExpirationInvalid();
+    // 4. pass
+  },
+
+  expectCardNumberCorrectExpirationInvalid: async () => {
     await textSuccess(page).expectAbsent();
     await textErrors(page).ensurePresent();
     await inpCardNumber(page).expectNotInvalid();
     await inpExpMonth(page).expectInvalid();
     await inpExpYear(page).expectInvalid();
-    // 4. pass
   },
 
   correctCCNumberCorrectExpirationBlankCvv: async () => {
@@ -194,13 +195,18 @@ export const paymentFormComponent = (page, expect) => tagPageObject('paymentForm
     await checkoutPage(page, expect).submitPaymentForm();
 
     // error, expired
+    await paymentFormComponent(page, expect).expectErrorButAllFieldsValid();
+
+    await inpCvv(page).expectInvalid();
+    // 5. pass
+  },
+
+  expectErrorButAllFieldsValid: async () => {
     await textSuccess(page).expectAbsent();
     await textErrors(page).ensurePresent();
     await inpCardNumber(page).expectNotInvalid();
     await inpExpMonth(page).expectNotInvalid();
     await inpExpYear(page).expectNotInvalid();
-    await inpCvv(page).expectInvalid();
-    // 5. pass
   },
 
   allCorrectlyFilled: async () => {
@@ -217,11 +223,8 @@ export const paymentFormComponent = (page, expect) => tagPageObject('paymentForm
     await paymentFormComponent(page, expect).allCorrectlyFilled();
     await checkoutPage(page, expect).submitPaymentForm();
 
-    await textSuccess(page).expectAbsent();
-    await textErrors(page).ensurePresent();
-    await inpCardNumber(page).expectNotInvalid();
-    await inpExpMonth(page).expectNotInvalid();
-    await inpExpYear(page).expectNotInvalid();
+    await paymentFormComponent(page, expect).expectErrorButAllFieldsValid();
+
     await inpCvv(page).expectNotInvalid();
     await inpZip(page).expectNotInvalid();
   },

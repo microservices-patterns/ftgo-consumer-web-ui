@@ -13,12 +13,12 @@ export const obtainCartAsyncThunk = createAsyncThunk(
 export const updateCartWithItemAsyncThunk = createAsyncThunk(
   'cart/updateCartWithItem',
   async (data, { rejectWithValue, dispatch }) => {
-    const { cartId, restaurantId, itemId, qty, item } = data;
+    const { restaurantId, itemId, qty, item } = data;
     void item;
-    if (!restaurantId || !cartId || !itemId) {
+    if (!restaurantId || !itemId) {
       return;
     }
-    return putUpdateCartWithItem(cartId, restaurantId, itemId, qty);
+    return putUpdateCartWithItem(restaurantId, itemId, qty);
   });
 
 export const postCreatePaymentIntentAsyncThunk = createAsyncThunk(
@@ -43,7 +43,21 @@ export const postConfirmPaymentAsyncThunk = createAsyncThunk(
 
 const initialState = {
   id: '123',
-  subTotal: 0,
+  orderId: '',
+  cartInfo: {
+    total: 0,
+    subTotal: 0,
+    delivery: 0,
+    tax: 0,
+    taxAmount: 0
+  },
+  verboseCartInfo: {
+    total: '$0.00',
+    subTotal: '$0.00',
+    delivery: '$0.00',
+    tax: '$0.00',
+    taxAmount: '0'
+  },
   status: null,
   items: [],
   paymentSuccessful: null
@@ -52,6 +66,8 @@ const initialState = {
 export const accessCart = (propName) => ({ [ ns ]: state }) => propName ? (state?.[ propName ]) : state;
 export const accessCartItems = () => ({ [ ns ]: state }) => state?.items ?? [];
 export const accessCartStatus = () => ({ [ ns ]: state }) => state?.status;
+export const accessCartInfo = () => ({ [ ns ]: state }) => state?.cartInfo ?? {};
+export const accessVerboseCartInfo = () => ({ [ ns ]: state }) => state?.verboseCartInfo ?? {};
 export const accessPaymentSuccessful = () => ({ [ ns ]: state }) => state?.paymentSuccessful;
 
 export const cartSlice = createSlice({
@@ -103,21 +119,31 @@ export const cartSlice = createSlice({
 
     })
     .addCase(updateCartWithItemAsyncThunk.fulfilled, (state, { payload, meta }) => {
-      const { itemId } = meta.arg;
-      const idx = state.items.findIndex(item => item.id === itemId);
-      if (idx < 0) {
-        return;
+
+      if (!payload) {
+        return state;
       }
 
-      const oldItem = state.items[ idx ];
+      const { items, total, subTotal, delivery, tax, taxAmount, orderId } = payload;
+      const cartInfo = { total, subTotal, delivery, tax, taxAmount };
+      const stateItemsMap = new Map(state.items.map(i => ([ i.id, i ])));
+      const arrivedItemsMap = new Map(items.map(i => ([ i.id, i ])));
+      const uniqueIds = [ ...new Set([ ...stateItemsMap.keys(), ...arrivedItemsMap.keys() ]) ];
+      state.items = uniqueIds.map((id) => Object.assign({},
+        stateItemsMap.get(id) || {},
+        arrivedItemsMap.get(id) || {},
+        { 'oldCount': undefined }));
+      state.cartInfo = cartInfo;
+      state.verboseCartInfo = verboseCurrencyProps(cartInfo);
+      state.orderId = orderId;
 
-      state.items = [
-        ...state.items.slice(0, idx),
-        ...(oldItem.count ? [ Object.assign({}, state.items[ idx ], {
-          oldCount: undefined
-        }) ] : []),
-        ...state.items.slice(idx + 1)
-      ];
+      //      [
+      //        ...state.items.slice(0, idx),
+      //        ...(oldItem.count ? [ Object.assign({}, state.items[ idx ], {
+      //          oldCount: undefined
+      //        }) ] : []),
+      //        ...state.items.slice(idx + 1)
+      //      ];
 
     })
     .addCase(updateCartWithItemAsyncThunk.rejected, (state, { payload, meta, error }) => {
@@ -158,3 +184,14 @@ const namedReducer = {
 };
 
 export default namedReducer;
+
+function verboseCurrencyProps(src) {
+  return Object.fromEntries(Array.from(Object.entries(src), ([ k, v ]) => ([ k, verboseCurrency(v) ])));
+}
+
+function verboseCurrency(input) {
+  if (!input) {
+    return '$0.00';
+  }
+  return (`$${ Number(input).toFixed(2) }`).replace('$.', '$0.');
+}

@@ -1,33 +1,36 @@
 import { useSelector } from 'react-redux';
-import { accessCart, accessCartItems, accessCartStatus } from '../../../features/cart/cartSlice';
-import { useMemo } from 'react';
+import { accessCart, accessCartInfo, accessCartStatus, accessVerboseCartInfo } from '../../../features/cart/cartSlice';
 
 export const OrderInfo = () => {
 
-  const cartId = useSelector(accessCart('id'));
+  const orderId = useSelector(accessCart('orderId'));
   const cartStatus = useSelector(accessCartStatus());
-  const cartItems = useSelector(accessCartItems());
-  void cartId;
+  const verboseCartInfo = useSelector(accessVerboseCartInfo());
+  const cartInfo = useSelector(accessCartInfo());
+  console.log('[cartInfo]', cartInfo);
+
+  void orderId;
   void cartStatus;
 
-  const subTotal = useMemo(() => cartItems.reduce((memo, item) => memo + item.price * item.count, 0), [ cartItems ]);
+  const { total, subTotal, tax, delivery } = verboseCartInfo;
+  const { taxAmount } = cartInfo;
 
   return <>
     <div className="row pt-2">
       <div className="col-6">Subtotal:</div>
-      <div className="col-6 text-right">${ subTotal }</div>
+      <div className="col-6 text-right">{ subTotal }</div>
     </div>
     <div className="row pt-2">
       <div className="col-6">Delivery Fee:</div>
-      <div className="col-6 text-right">$0.00</div>
+      <div className="col-6 text-right">{ delivery }</div>
     </div>
     <div className="row pt-2">
-      <div className="col-6">Fees & Estimated Tax:</div>
-      <div className="col-6 text-right">$0.00</div>
+      <div className="col-6">Fees & Estimated Tax ({ (100 * taxAmount).toFixed(2) }%):</div>
+      <div className="col-6 text-right">{ tax }</div>
     </div>
     <div className="row pt-2">
       <div className="col-6">Total:</div>
-      <div className="col-6 text-right">$0.00</div>
+      <div className="col-6 text-right">{ total }</div>
     </div>
   </>;
 };

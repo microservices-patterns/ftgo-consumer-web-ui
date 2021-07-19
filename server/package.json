@@ -8,8 +8,8 @@
     "dev": "PORT=8080 nodemon -w src --exec \"babel-node src\"",
     "build": "$(npm bin)/babel src --out-dir dist",
     "xstart": "PORT=8080 node --experimental-specifier-resolution=node dist/index.js",
-    "start": "PORT=8080 node -r esm dist",
-    "xprestart": "npm run -s build",
+    "start": "PORT=8080 node dist",
+    "prestart": "npm run -s build",
     "test": "eslint src"
   },
   "repository": "developit/express-es6-rest-api",
@@ -22,9 +22,9 @@
     "core-js": "^3.15.2",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
-    "esm": "^3.2.25",
     "express": "^4.17.1",
     "morgan": "^1.10.0",
+    "node-cache": "^5.1.2",
     "regenerator-runtime": "^0.13.7",
     "resource-router-middleware": "^0.7.0"
   },

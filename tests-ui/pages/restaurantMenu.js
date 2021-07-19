@@ -28,7 +28,7 @@ export const restaurantMenuPage = page => tagPageObject('restaurantMenuPage', {
     await toCheckoutButton(page).expectDisabled();
 
     await waitForSelector(page, cssSel(SEL.INFO_TRAY_IS_EMPTY));
-    await waitForSelector(page, cssSel(SEL.INFO_CART_VALUE_OF('0.00')));
+    await waitForSelector(page, cssSel(SEL.INFO_CART_VALUE_OF(0)));
 
     const paginationControlSel = cssSel(SEL.TBL_RESTAURANT_MENU).desc(SEL.CTL_PAGINATION_FOR_TABLE);
     await waitForSelector(page, paginationControlSel);
@@ -48,7 +48,7 @@ export const restaurantMenuPage = page => tagPageObject('restaurantMenuPage', {
 
     await toCheckoutButton(page).expectNotDisabled();
 
-    await waitForSelectorNotPresent(page, cssSel(SEL.INFO_CART_VALUE_OF('0.00')));
+    await waitForSelectorNotPresent(page, cssSel(SEL.INFO_CART_VALUE_OF(0)));
 
   },
 

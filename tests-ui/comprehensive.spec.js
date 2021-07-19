@@ -11,6 +11,7 @@ import { restaurantsListPage } from './pages/restaurantsList';
 import { restaurantMenuPage } from './pages/restaurantMenu';
 import { checkoutPage } from './pages/checkout';
 import { summarizePageObject } from './pages/utilities';
+import { thankYouPage } from './pages/thankYou';
 
 void makeScreenshot;
 
@@ -146,6 +147,21 @@ describe('Interaction with the entire FTGO UI application:', () => {
         await checkoutPage(page, expect).attemptValidOkCard();
 
       });
+
+      describe(`[thank you page]`, () => {
+
+        test(`[thank you page] successful navigation`, async () => {
+
+          await thankYouPage(page, expect).expectVisitingSelf();
+
+        });
+
+        test(`[thank you page] order ID is present`, async () => {
+
+          await thankYouPage(page, expect).ensureOrderIdIsPresent();
+
+        });
+      })
 
     });
 

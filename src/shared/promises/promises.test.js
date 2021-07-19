@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-redeclare
 /* global describe, expect, test */
 
-import { blockedAsync, ExposedPromise, forTimeout, safelyExecuteAsync, stubAsync } from './index';
+import { blockedAsync, ExposedPromise, forTimeout, makeSafelyRunAsyncFn, safelyExecuteAsync, stubAsync } from './index';
 
 describe(`shared/promises/index.js`, () => {
 
@@ -107,6 +107,25 @@ describe(`shared/promises/index.js`, () => {
         return 'Resolved promise';
       };
       const result = await safelyExecuteAsync(anAsyncFunctionThatResolved());
+      expect(result).toEqual([ null, 'Resolved promise' ]);
+    });
+  });
+
+  describe(`makeSafelyRunAsyncFn(asyncFn) => async (...args): Promise`, () => {
+
+    test(`Wraps rejecting async fn in the error part of a promised tuple: Promise<[error result]>`, async () => {
+      const anAsyncFunctionThatRejects = async () => {
+        throw new Error('Rejected promise');
+      };
+      const result = await makeSafelyRunAsyncFn(anAsyncFunctionThatRejects)();
+      expect(result).toEqual([ new Error('Rejected promise') ]);
+    });
+
+    test(`Wraps resolved promise in the result part of a promised tuple: Promise<[error result]>`, async () => {
+      const anAsyncFunctionThatResolved = async () => {
+        return 'Resolved promise';
+      };
+      const result = await makeSafelyRunAsyncFn(anAsyncFunctionThatResolved)();
       expect(result).toEqual([ null, 'Resolved promise' ]);
     });
   });

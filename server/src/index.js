@@ -12,7 +12,7 @@ let app = express();
 app.server = http.createServer(app);
 
 // logger
-app.use(morgan('dev'));
+//app.use(morgan('combined'));
 
 // 3rd party middleware
 app.use(cors({

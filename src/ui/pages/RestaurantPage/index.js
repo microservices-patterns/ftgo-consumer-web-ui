@@ -3,13 +3,14 @@ import { Button, Col, Container } from 'reactstrap';
 import { SelectedRestaurantRow } from '../../components/SelectedRestaurantRow';
 import { useDispatch, useSelector } from 'react-redux';
 import { accessSelectedRestaurantId, resetSelectedRestaurant } from '../../../features/restaurants/restaurantsSlice';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { navigateToCheckout, navigateToEditDeliveryAddress } from '../../../features/actions/navigation';
 import { YourTrayItems } from './yourTrayItems';
 import { MenuItems } from './menuItems';
 import { IconChevronRight } from '../../elements/icons';
-import { accessCartItems } from '../../../features/cart/cartSlice';
+import { accessCartInfo, accessCartItems, accessVerboseCartInfo } from '../../../features/cart/cartSlice';
 import { e2eAssist } from '../../../testability';
+import { accessIsLoading } from '../../../features/ui/loadingSlice';
 
 
 export const RestaurantPage = ({ match }) => {
@@ -19,12 +20,9 @@ export const RestaurantPage = ({ match }) => {
   const dispatch = useDispatch();
   const selectedRestaurantId = useSelector(accessSelectedRestaurantId());
   const cartItems = useSelector(accessCartItems());
-
-  const cartSubtotal = useMemo(() => cartItems.reduce((sum, {
-    price,
-    count
-  }) => (sum + Number(price) * count), 0), [ cartItems ]);
-
+  const isLoading = useSelector(accessIsLoading());
+  const cartInfo = useSelector(accessCartInfo());
+  const verboseCartInfo = useSelector(accessVerboseCartInfo());
 
   const handleToCheckout = useCallback(() => {
     dispatch(navigateToCheckout());
@@ -47,10 +45,11 @@ export const RestaurantPage = ({ match }) => {
         <MenuItems restaurantId={ selectedRestaurantId } />
       </Col>
       <Col xs={ 12 } lg={ 5 } className="py-2">
-        <h2>Your Tray: <div className="d-inline-block float-right" { ...e2eAssist.INFO_CART_VALUE_OF(cartSubtotal.toFixed(2)) }>{ `$${ cartSubtotal.toFixed(2) }` }</div></h2>
+        <h2>Your Tray: <div className="d-inline-block float-right" { ...e2eAssist.INFO_CART_VALUE_OF(cartInfo.subTotal ?? 0 ) }>{ verboseCartInfo.subTotal ?? '' }</div>
+        </h2>
         <YourTrayItems />
         <div className="text-right">
-          <Button color="primary" disabled={ !cartItems.length } onClick={ cartItems.length ? handleToCheckout : null }  { ...e2eAssist.BTN_TO_CHECKOUT }>Checkout <IconChevronRight /></Button>
+          <Button color="primary" disabled={ isLoading || !cartItems.length } onClick={ cartItems.length ? handleToCheckout : null }  { ...e2eAssist.BTN_TO_CHECKOUT }>Checkout <IconChevronRight /></Button>
         </div>
       </Col>
     </Container>
